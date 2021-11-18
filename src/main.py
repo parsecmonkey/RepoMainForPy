@@ -1,12 +1,9 @@
 import git
 import os
 import shutil
-import subprocess
 
-url = 'https://github.com/parsecmonkey/RepoMainForPy'
-
-to_path = 'project' # cloneしたプロジェクトを出力するパス
-delete_path = "project"
+url  = 'https://github.com/parsecmonkey/RepoMainForPy'
+path = 'project' # レポジトリのパス
 
 # フォルダを削除
 def rmtree(top):
@@ -17,13 +14,15 @@ def rmtree(top):
             os.remove(filename)
         for name in dirs:
             os.rmdir(os.path.join(root, name))
-    os.rmdir(top) 
+    os.rmdir(top)
 
-rmtree(delete_path) # projectフォルダが存在していれば削除
+if os.path.isdir(path):
+    rmtree(path) # projectフォルダが存在していれば削除
 
-git.Repo.clone_from(url, to_path)
+git.Repo.clone_from(url, path) # レポジトリをクローン
 
-# repo = git.Repo()
+repo = git.Repo(path)
 
-# for commit in repo.iter_commits('master'):
-#     print(commit.author, commit.committed_datetime, commit.hexsha)
+# git log
+for commit in repo.iter_commits():
+    print(commit.author, commit.committed_datetime, commit.hexsha)
