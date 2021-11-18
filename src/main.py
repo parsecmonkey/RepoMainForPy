@@ -1,9 +1,18 @@
 import git
 import os
-import shutil
+
+import Color
 
 url  = 'https://github.com/parsecmonkey/RepoMainForPy'
 path = 'project' # レポジトリのパス
+
+# タイトルを表示
+def setTitle():
+    print(f"{Color.CYAN} _____              _____ _                 {Color.RESET}")
+    print(f"{Color.CYAN}|  _  |___ ___ ___ |     |_|___ ___         {Color.RESET}")
+    print(f"{Color.CYAN}|    _|  _| . | . || | | | |   |  _|        {Color.RESET}")
+    print(f"{Color.CYAN}|_|\__|___|  _|___||_|_|_|_|_|_|___| for Py {Color.RESET}")
+    print(f"{Color.CYAN}          |_|                               {Color.RESET}\n")
 
 # フォルダを削除
 def rmtree(top):
@@ -15,6 +24,8 @@ def rmtree(top):
         for name in dirs:
             os.rmdir(os.path.join(root, name))
     os.rmdir(top)
+
+setTitle()
 
 if os.path.isdir(path):
     rmtree(path) # projectフォルダが存在していれば削除
