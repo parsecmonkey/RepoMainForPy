@@ -1,9 +1,19 @@
 import git
+import os
+import shutil
 
-# urlは適宜自身が編集可能なレポジトリに書き換えてください
 url = 'https://github.com/parsecmonkey/RepoMainForPy'
 
-# cloneしたプロジェクトを出力するパス
-to_path = 'project'
+to_path = 'project' # cloneしたプロジェクトを出力するパス
+delete_path = "project"
 
+# projectフォルダが存在していれば削除
+if(os.path.isdir('project/') == True):
+    shutil.rmtree('project/')
+        
 git.Repo.clone_from(url, to_path)
+
+# repo = git.Repo()
+
+# for commit in repo.iter_commits('master'):
+#     print(commit.author, commit.committed_datetime, commit.hexsha)
