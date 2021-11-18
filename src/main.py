@@ -14,6 +14,9 @@ def setTitle():
     print(f"{Color.CYAN}|_|\__|___|  _|___||_|_|_|_|_|_|___| for Py {Color.RESET}")
     print(f"{Color.CYAN}          |_|                               {Color.RESET}\n")
 
+def setEnd():
+    print(f"\n{Color.CYAN}end{Color.RESET}\n")
+
 # フォルダを削除
 def rmtree(top):
     for root, dirs, files in os.walk(top, topdown=False):
@@ -30,10 +33,14 @@ setTitle()
 if os.path.isdir(path):
     rmtree(path) # projectフォルダが存在していれば削除
 
-git.Repo.clone_from(url, path) # レポジトリをクローン
+repo = git.Repo.clone_from(url, path) # レポジトリをクローン
 
-repo = git.Repo(path)
+print("コマンドを入力してください。")
+command = input(">> ")
 
-# git log
-for commit in repo.iter_commits():
-    print(commit.author, commit.committed_datetime, commit.hexsha)
+if (command == "log"):
+    # git log
+    for commit in repo.iter_commits():
+        print(commit.author, commit.committed_datetime, commit.hexsha)
+
+setEnd()
