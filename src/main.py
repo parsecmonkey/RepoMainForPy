@@ -3,9 +3,6 @@ import os
 
 import Color
 
-url  = 'https://github.com/parsecmonkey/RepoMainForPy'
-path = 'project' # レポジトリのパス
-
 # タイトルを表示
 def setTitle():
     print(f"{Color.CYAN} _____              _____ _                 {Color.RESET}")
@@ -28,19 +25,32 @@ def rmtree(top):
             os.rmdir(os.path.join(root, name))
     os.rmdir(top)
 
-setTitle()
+# 最初に実行
+if __name__ == "__main__":
+    path = "project" # レポジトリのパス
 
-if os.path.isdir(path):
-    rmtree(path) # projectフォルダが存在していれば削除
+    setTitle()
 
-repo = git.Repo.clone_from(url, path) # レポジトリをクローン
+    if os.path.isdir(path):
+        rmtree(path) # projectフォルダが存在していれば削除
 
-print("コマンドを入力してください。")
-command = input(">> ")
+    print("解析するレポジトリのURLを入力してください")
+    boolClone = True
+    while (boolClone):
+        try:
+            url = input(">>> ")
+            repo = git.Repo.clone_from(url, path) # レポジトリをクローン
+            print("レポジトリをクローンしました\n")
+            boolClone = False
+        except Exception as err:
+            print("レポジトリをクローン出来ませんでした\nもう一度、入力してください")
 
-if (command == "log"):
-    # git log
-    for commit in repo.iter_commits():
-        print(commit.author, commit.committed_datetime, commit.hexsha)
+    print("コマンドを入力してください")
+    command = input(">>> ")
 
-setEnd()
+    if (command == "log"):
+        # git log
+        for commit in repo.iter_commits():
+            print(commit.author, commit.committed_datetime, commit.hexsha)
+
+    setEnd()

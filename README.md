@@ -14,7 +14,7 @@ A sample program for repository mining using GitPython.
 - git version 2.29.2.windows.3
 - GitPython  3.1.24
 
-## GitPython Install
+## GitPython install
 ```
 $ pip install GitPython
 ```
@@ -23,7 +23,7 @@ $ pip install GitPython
 
 ## Execution method
 ```
-$ python main.py
+$ python Main.py
 ```
 
 ## Operation commands
