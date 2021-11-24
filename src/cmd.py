@@ -1,13 +1,20 @@
 # コマンド処理
 
+import cmd_log
+import cmd_help
+
 def search(repo, cmd):
-    # log
-    if (cmd == "log"):
-        for commit in repo.iter_commits():
-            print(commit.author, commit.committed_datetime, commit.hexsha)
+    # help
+    if (cmd == "help"):
+        cmd_help.run()
         return True
 
-    # 終了
+    # log
+    elif (cmd == "log"):
+        cmd_log.run(repo)
+        return True
+
+    # exit
     elif (cmd == "exit()" or cmd == "exit"):
         return False
 

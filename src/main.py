@@ -50,7 +50,6 @@ def main():
         print("コマンドを入力してください")
         in_cmd = input(">>> ")
         bool_cmd = cmd.search(repo, in_cmd)
-        print("\n")
 
     setEnd()
 
