@@ -5,14 +5,14 @@ import color
 import cmd
 
 # タイトルを表示
-def setTitle():
+def set_title():
     print(f"{color.CYAN} _____              _____ _                 {color.RESET}")
     print(f"{color.CYAN}|  _  |___ ___ ___ |     |_|___ ___         {color.RESET}")
     print(f"{color.CYAN}|    _|  _| . | . || | | | |   |  _|        {color.RESET}")
     print(f"{color.CYAN}|_|\__|___|  _|___||_|_|_|_|_|_|___| for Py {color.RESET}")
     print(f"{color.CYAN}          |_|                               {color.RESET}\n")
 
-def setEnd():
+def set_end():
     print(f"\n{color.CYAN}end{color.RESET}\n")
 
 # フォルダを削除
@@ -29,7 +29,7 @@ def rmtree(top):
 def main():
     path = "project" # レポジトリのパス
 
-    setTitle()
+    set_title()
 
     if os.path.isdir(path):
         rmtree(path) # projectフォルダが存在していれば削除
@@ -51,7 +51,7 @@ def main():
         in_cmd = input(">>> ")
         bool_cmd = cmd.search(repo, in_cmd)
 
-    setEnd()
+    set_end()
 
 # 最初に実行
 if __name__ == "__main__":
