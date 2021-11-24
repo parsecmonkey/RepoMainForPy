@@ -1,20 +1,29 @@
 # log
 
-import sys
+import csv
 
 def run(repo):
-    sys.stdout = open("log.txt","w+", encoding="utf-8") # 標準出力をファイルに変更
+    f = open("log.csv","w+", encoding="utf_8_sig", newline='')
+    csv_writer = csv.writer(f)
+    csv_writer.writerow([
+        'commit_no',
+        'author',
+        'committed_datetime',
+        'message',
+        'hexsha']) # csvヘッダー追加
 
     commits_size = repo.git.rev_list('--count', 'HEAD') # コミットの総数
     commit_count = 0
     for commit in repo.iter_commits():
-        print("---", int(commits_size) - commit_count, "commit ---")
-        print("author :", commit.author)
-        print("committed_datetime :", commit.committed_datetime.strftime('%Y-%m-%d %H:%M:%S'))
-        print("hexsha :", commit.hexsha)
-        print(commit.message)
+        commit_no =  int(commits_size) - commit_count
+        csv_writer.writerow([
+            commit_no,
+            commit.author,
+            commit.committed_datetime.strftime('%Y-%m-%d %H:%M:%S'),
+            commit.message,
+            commit.hexsha]) # csvファイルに書き込み
         commit_count += 1
 
-    sys.stdout = sys.__stdout__ # 元に戻す
+    f.close()
 
     print("コミット数：" + commits_size)
