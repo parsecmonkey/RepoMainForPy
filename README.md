@@ -9,10 +9,10 @@
 A sample program for repository mining using GitPython.
 
 ## Development environment
-- windows 10
+- Windows 10
 - Python 3.10.0
-- git version 2.29.2.windows.3
-- GitPython  3.1.24
+- Git 2.29.2.windows.3
+- GitPython 3.1.24
 
 ## GitPython install
 ```
@@ -28,6 +28,12 @@ $ python main.py
 
 ## Operation commands
 
+### help
+```
+$ help
+```
+display command list
+
 ### clone
 ```
 $ clone [repository url]
@@ -37,3 +43,9 @@ $ clone [repository url]
 ```
 $ log
 ```
+
+### exit
+```
+$ exit
+```
+session end
