@@ -23,7 +23,7 @@ $ pip install GitPython
 
 ## Execution method
 ```
-$ python Main.py
+$ python main.py
 ```
 
 ## Operation commands
