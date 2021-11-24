@@ -2,6 +2,7 @@
 
 import cmd_log
 import cmd_help
+import cmd_plot
 
 def search(repo, cmd):
     # help
@@ -12,6 +13,10 @@ def search(repo, cmd):
     # log
     elif (cmd == "log"):
         cmd_log.run(repo)
+        return True
+
+    elif (cmd == "plot"):
+        cmd_plot.run(repo)
         return True
 
     # exit

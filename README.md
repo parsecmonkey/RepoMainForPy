@@ -14,12 +14,16 @@ A sample program for repository mining using GitPython.
 - Git 2.29.2.windows.3
 - GitPython 3.1.24
 
-## GitPython install
+## Pip install
 ```
 $ pip install GitPython
 ```
 - [GitPython Documentation](https://gitpython.readthedocs.io/en/stable/index.html)
 - [GitPython Repository](https://github.com/gitpython-developers/GitPython)
+
+```
+$ pip install matplotlib
+```
 
 ## Execution method
 ```
@@ -42,6 +46,11 @@ $ clone [repository url]
 ### log
 ```
 $ log
+```
+
+### plot
+```
+$ plot
 ```
 
 ### exit
