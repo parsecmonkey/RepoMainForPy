@@ -3,7 +3,7 @@
 import csv
 
 def run(repo):
-    f = open("log.csv","w+", encoding="utf_8_sig", newline='')
+    f = open("log/log.csv","w+", encoding="utf_8_sig", newline='')
     csv_writer = csv.writer(f)
     csv_writer.writerow([
         'commit_no',

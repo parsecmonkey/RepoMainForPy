@@ -1,5 +1,5 @@
 /project
 /src/__pycache__
-/log.csv
-/commit_data.csv
-/diff.log
+/log/commit_data.csv
+/log/diff.log
+/log/log.csv

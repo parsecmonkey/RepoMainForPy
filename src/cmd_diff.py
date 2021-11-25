@@ -3,7 +3,7 @@
 import sys
 
 def run(repo):
-    sys.stdout = open('diff.log',"w+", encoding="utf_8_sig") # 標準出力をdiff.logに変更
+    sys.stdout = open('log/diff.log',"w+", encoding="utf_8_sig") # 標準出力をdiff.logに変更
 
     commits_size = repo.git.rev_list('--count', 'HEAD') # コミットの総数
     commit_count = 0
