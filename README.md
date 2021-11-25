@@ -25,6 +25,10 @@ $ pip install GitPython
 $ pip install matplotlib
 ```
 
+```
+$ pip install seaborn
+```
+
 ## Execution method
 ```
 $ python main.py

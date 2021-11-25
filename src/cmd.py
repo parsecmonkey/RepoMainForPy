@@ -1,7 +1,8 @@
 # コマンド処理
 
-import cmd_log
 import cmd_help
+import cmd_log
+import cmd_diff
 import cmd_plot
 
 def search(repo, cmd):
@@ -15,6 +16,12 @@ def search(repo, cmd):
         cmd_log.run(repo)
         return True
 
+    # diff
+    elif (cmd == "diff"):
+        cmd_diff.run(repo)
+        return True
+
+    # plot
     elif (cmd == "plot"):
         cmd_plot.run(repo)
         return True
