@@ -58,7 +58,7 @@ def get_days_list():
 
 # 現在の年のコミットデータを作成
 def set_commit_data(year_days, days_list, committed_year, committed_datetimes):
-    f = open("log/commit_data.csv","w+", encoding="utf_8_sig", newline='')
+    f = open("./log/commit_data.csv","w+", encoding="utf_8_sig", newline='')
     csv_writer = csv.writer(f)
     csv_writer.writerow([
         'year',
@@ -110,7 +110,7 @@ def run(repo):
     set_commit_data(year_days, days_list, committed_year, committed_datetimes)
 
     # CSV読み込み
-    df = pd.read_csv("log/commit_data.csv",sep=",")
+    df = pd.read_csv("./log/commit_data.csv",sep=",")
     df.columns = ['year','month','month_en','day','dow_no','dow', 'week', 'commit']
     df = df.pivot('dow_no','week','commit')
     
