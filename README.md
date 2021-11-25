@@ -29,6 +29,10 @@ $ pip install matplotlib
 $ pip install seaborn
 ```
 
+```
+$ pip install tqdm
+```
+
 ## Execution method
 ```
 $ python src/main.py
