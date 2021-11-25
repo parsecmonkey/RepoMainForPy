@@ -31,7 +31,7 @@ $ pip install seaborn
 
 ## Execution method
 ```
-$ python main.py
+$ python src/main.py
 ```
 
 ## Operation commands
@@ -50,6 +50,11 @@ $ clone [repository url]
 ### log
 ```
 $ log
+```
+
+### diff
+```
+$ diff
 ```
 
 ### plot
