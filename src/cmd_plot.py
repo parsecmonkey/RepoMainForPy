@@ -6,6 +6,7 @@ import datetime
 import csv
 import seaborn as sns
 import pandas as pd
+from tqdm import tqdm
 
 # 現在の年を取得
 def get_year():
@@ -21,20 +22,13 @@ def get_dow(day): # day of week
 
 # 曜日を数字で取得
 def get_dow_no(dow):
-    if (dow == "Sun"):
-        return 0
-    elif (dow == "Mon"):
-        return 1
-    elif (dow == "Tue"):
-        return 2
-    elif (dow == "Wed"):
-        return 3
-    elif (dow == "Thu"):
-        return 4
-    elif (dow == "Fri"):
-        return 5
-    elif (dow == "Sat"):
-        return 6
+    if   (dow == "Sun"): return 0
+    elif (dow == "Mon"): return 1
+    elif (dow == "Tue"): return 2
+    elif (dow == "Wed"): return 3
+    elif (dow == "Thu"): return 4
+    elif (dow == "Fri"): return 5
+    elif (dow == "Sat"): return 6
 
 # 月を英語の文字列で取得
 def get_month_en(day): # day of week
@@ -57,7 +51,7 @@ def get_days_list():
     return days_list
 
 # 現在の年のコミットデータを作成
-def set_commit_data(year_days, days_list, committed_year, committed_datetimes):
+def set_commit_data(repo, year_days, days_list, committed_year, committed_datetimes):
     f = open("./log/commit_data.csv","w+", encoding="utf_8_sig", newline='')
     csv_writer = csv.writer(f)
     csv_writer.writerow([
@@ -73,26 +67,29 @@ def set_commit_data(year_days, days_list, committed_year, committed_datetimes):
     day_count = 0
     week = 0
     # 現在の年の日ごとコミット数を計算
-    for month in range(12):
-        for day in range(calendar.monthrange(int(get_year()), month+1)[1]):
-            commit_count = committed_datetimes.count(days_list[day_count])
-            dow = get_dow(days_list[day_count])
-            dow_no = get_dow_no(dow)
-            month_en = get_month_en(days_list[day_count])
-            # committed_year.setdefault(days_list[day_count], committed_datetimes.count(days_list[day_count]))
-            csv_writer.writerow([
-                get_year(),
-                month+1,
-                month_en,
-                day+1,
-                dow_no,
-                dow,
-                week,
-                commit_count]) # csvファイルに書き込み
-            day_count += 1
+    with tqdm(total=year_days, desc='log.csv') as pbar: # プログレスバーの設定
+        for month in range(12):
+            for day in range(calendar.monthrange(int(get_year()), month+1)[1]):
+                commit_count = committed_datetimes.count(days_list[day_count])
+                dow = get_dow(days_list[day_count])
+                dow_no = get_dow_no(dow)
+                month_en = get_month_en(days_list[day_count])
+                # committed_year.setdefault(days_list[day_count], committed_datetimes.count(days_list[day_count]))
+                csv_writer.writerow([
+                    get_year(),
+                    month+1,
+                    month_en,
+                    day+1,
+                    dow_no,
+                    dow,
+                    week,
+                    commit_count]) # csvファイルに書き込み
+                day_count += 1
 
-            if dow == "Sat":
-                week += 1
+                if dow == "Sat":
+                    week += 1
+
+                pbar.update(1) # プログレスバーの進捗率を更新
 
     f.close()
 
@@ -107,7 +104,7 @@ def run(repo):
     committed_year = {} # 現在の年の日ごとコミット数
 
     # コミットデータを作成
-    set_commit_data(year_days, days_list, committed_year, committed_datetimes)
+    set_commit_data(repo, year_days, days_list, committed_year, committed_datetimes)
 
     # CSV読み込み
     df = pd.read_csv("./log/commit_data.csv",sep=",")
