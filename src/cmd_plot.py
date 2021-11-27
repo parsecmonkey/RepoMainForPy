@@ -35,12 +35,12 @@ def get_month_en(day): # day of week
     month_en = datetime.datetime.strptime(day, '%Y-%m-%d').strftime('%b')
     return month_en
 
+# 月が変わった(week+0.5)を取得
 def get_month_change_point(days_list):
     month_point = [] # 月が替わるタイミングのweek
 
     day_count = 0
     week = 0
-    # 現在の年の日ごとコミット数を計算
     for month in range(12):
         month_point.append(week+0.5)
         for i in range(calendar.monthrange(int(get_year()), month+1)[1]):
@@ -118,7 +118,7 @@ def run(repo):
     year_days = calc_days() # 現在の年の日数
     days_list = get_days_list() # 現在の年の日付リスト
     committed_year = {} # 現在の年の日ごとコミット数
-    mcp = get_month_change_point(days_list) # 月が変わった週を取得
+    mcp = get_month_change_point(days_list) # 月が変わった(week+0.5)を取得
 
     # コミットデータを作成
     set_commit_data(repo, year_days, days_list, committed_year, committed_datetimes)
@@ -128,23 +128,23 @@ def run(repo):
     df.columns = ['year','month','month_en','day','dow_no','dow', 'week', 'commit']
     df = df.pivot('dow_no','week','commit')
     
-    f, ax = plt.subplots(figsize=(11, 3)) # 11対3のプロットを作成
+    plt.subplots(figsize=(10, 3)) # 10対3のプロットを作成
 
     sns.heatmap(
         df, 
         cmap="Greens", 
-        linewidths=.10, 
+        linewidths=.15, 
         square=True, 
-        cbar=False, 
-        xticklabels=4, 
-        yticklabels=2)
+        cbar=False)
 
     plt.title(str(get_year()) + " year (" + repo.git.rev_list('--count', 'HEAD') + " commit)")
     plt.xlabel('')
     plt.ylabel('')
     plt.yticks(rotation=0)
     plt.yticks([1.5, 3.5, 5.5], ['Mon', 'Wed', 'Fri'])
+    plt.xticks(rotation=0)
     plt.xticks(
         [mcp[0], mcp[1], mcp[2], mcp[3], mcp[4], mcp[5], mcp[6], mcp[7], mcp[8], mcp[9], mcp[10], mcp[11]],
         ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'])
-    plt.show() # プロット表示
+    # plt.show() # プロット表示
+    plt.savefig("pic/commit_data.png", tight_layout=True) # グラフを画像で保存

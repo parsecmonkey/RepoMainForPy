@@ -14,7 +14,7 @@ def search(repo, cmd):
 
     # clone
     elif (cmd == "clone"):
-        cmd_clone.run(1)
+        cmd_clone.run()
         return True
 
     # log
