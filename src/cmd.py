@@ -1,6 +1,7 @@
 # コマンド処理
 
 import cmd_help
+import cmd_clone
 import cmd_log
 import cmd_diff
 import cmd_plot
@@ -9,6 +10,11 @@ def search(repo, cmd):
     # help
     if (cmd == "help"):
         cmd_help.run()
+        return True
+
+    # clone
+    elif (cmd == "clone"):
+        cmd_clone.run(1)
         return True
 
     # log
