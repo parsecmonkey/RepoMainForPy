@@ -1,3 +1,5 @@
+# main
+
 import color
 import cmd
 import cmd_clone
@@ -18,13 +20,13 @@ def main():
 
     set_title()
 
-    cmd_clone.run(0)
+    cmd_clone.run(0) # レポジトリをクローン
 
-    bool_cmd = True
-    while (bool_cmd):
+    cmd_flag = True
+    while (cmd_flag):
         print("コマンドを入力してください")
         in_cmd = input(">>> ")
-        bool_cmd = cmd.search(repo.get_repo(), in_cmd)
+        cmd_flag = cmd.search(repo.get_repo(), in_cmd)
 
     set_end()
 

@@ -8,7 +8,7 @@ def run(repo):
 
     commits_size = repo.git.rev_list('--count', 'HEAD') # コミットの総数
     commit_count = 0
-    hexsha = "HEAD" # 差分取得用のハッシュ値（親
+    hexsha = "HEAD" # 差分取得用のハッシュ値（親）
 
     with tqdm(total=int(commits_size), desc='diff.log') as pbar: # プログレスバーの設定
         for commit in repo.iter_commits():

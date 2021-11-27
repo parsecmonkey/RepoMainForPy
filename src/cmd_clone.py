@@ -1,7 +1,6 @@
 # clone
 
 import os
-import re
 
 import repo
 
@@ -16,7 +15,7 @@ def rmtree(top):
             os.rmdir(os.path.join(root, name))
     os.rmdir(top)
 
-def run(i):
+def run(first_flag):
     root_path = "project" # レポジトリのパス
 
     print("解析するレポジトリのURLを入力してください")
@@ -24,11 +23,11 @@ def run(i):
 
     # 最初だけ確認
     if os.path.isdir(root_path):
-        if i == 0:
+        if first_flag == 0:
             rmtree(root_path) # projectフォルダが存在していれば削除
 
-    bool_clone = True
-    while (bool_clone):
+    clone_flag = True
+    while (clone_flag):
         try:
             # "://"でURLか判定
             if url.find("://"):
@@ -38,11 +37,11 @@ def run(i):
 
             repo.clone_repo(url, path) # レポジトリをクローン
             print("レポジトリをクローンしました\n")
-            bool_clone = False
+            clone_flag = False
         except Exception as err:
             if os.path.isdir(path):
                 print("すでにクローン済みです\n")
-                bool_clone = False
+                clone_flag = False
             else:
                 print("レポジトリをクローン出来ませんでした\nもう一度、入力してください")
                 url = input(">>> ")

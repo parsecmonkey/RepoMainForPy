@@ -48,7 +48,7 @@ display command list
 
 ### clone
 ```
-$ clone [repository url]
+$ clone
 ```
 
 ### log

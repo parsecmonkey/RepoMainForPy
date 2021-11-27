@@ -34,6 +34,22 @@ def get_dow_no(dow):
 def get_month_en(day): # day of week
     month_en = datetime.datetime.strptime(day, '%Y-%m-%d').strftime('%b')
     return month_en
+
+def get_month_change_point(days_list):
+    month_point = [] # 月が替わるタイミングのweek
+
+    day_count = 0
+    week = 0
+    # 現在の年の日ごとコミット数を計算
+    for month in range(12):
+        month_point.append(week+0.5)
+        for i in range(calendar.monthrange(int(get_year()), month+1)[1]):
+            dow = get_dow(days_list[day_count])
+            day_count += 1
+            if dow == "Sat":
+                week += 1
+                
+    return month_point
     
 # 現在の年の日数を取得
 def calc_days():
@@ -102,6 +118,7 @@ def run(repo):
     year_days = calc_days() # 現在の年の日数
     days_list = get_days_list() # 現在の年の日付リスト
     committed_year = {} # 現在の年の日ごとコミット数
+    mcp = get_month_change_point(days_list) # 月が変わった週を取得
 
     # コミットデータを作成
     set_commit_data(repo, year_days, days_list, committed_year, committed_datetimes)
@@ -127,4 +144,7 @@ def run(repo):
     plt.ylabel('')
     plt.yticks(rotation=0)
     plt.yticks([1.5, 3.5, 5.5], ['Mon', 'Wed', 'Fri'])
+    plt.xticks(
+        [mcp[0], mcp[1], mcp[2], mcp[3], mcp[4], mcp[5], mcp[6], mcp[7], mcp[8], mcp[9], mcp[10], mcp[11]],
+        ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'])
     plt.show() # プロット表示
