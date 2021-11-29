@@ -65,6 +65,7 @@ $ diff
 ```
 $ plot
 ```
+![sample.png](https://github.com/parsecmonkey/RepoMainForPy/blob/main/pic/sample.png "sample.png")
 
 ### exit
 ```
