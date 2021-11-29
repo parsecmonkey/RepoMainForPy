@@ -31,6 +31,10 @@ def run(repo):
 
     commits_size = repo.git.rev_list('--count', 'HEAD') # コミットの総数
     commit_count = 0
+    commit_files = 0 # 変更したファイル数
+    insertions   = 0 # 追加した行数
+    deletions    = 0 # 削除した行数
+    lines        = 0 # 変更行の合計
     contributors = []
     with tqdm(total=int(commits_size), desc='log.csv') as pbar: # プログレスバーの設定
         for commit in repo.iter_commits():
@@ -48,9 +52,20 @@ def run(repo):
 
             pbar.update(1) # プログレスバーの進捗率を更新
 
+            file_list = commit.stats.files # ファイルごとの変更履歴（行）
+            for file_name in file_list:
+                commit_files += 1
+                insertions += file_list.get(file_name).get('insertions') # 追加した行数
+                deletions  += file_list.get(file_name).get('deletions') # 削除した行数
+                lines      += file_list.get(file_name).get('lines') # 変更行の合計
+
     f.close()
 
     print("コミット数：" + commits_size)
+    print("変更したファイル数：" + str(commit_files))
+    print("・追加した行数：" + str(insertions))
+    print("・削除した行数：" + str(deletions))
+    print("・変更行の合計：" + str(lines))
     print("コントリビュータ：")
     for contributor in contributors:
         print(contributor)
