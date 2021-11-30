@@ -52,12 +52,12 @@ def run(repo):
 
             pbar.update(1) # プログレスバーの進捗率を更新
 
-            file_list = commit.stats.files # ファイルごとの変更履歴（行）
-            for file_name in file_list:
-                commit_files += 1
-                insertions += file_list.get(file_name).get('insertions') # 追加した行数
-                deletions  += file_list.get(file_name).get('deletions') # 削除した行数
-                lines      += file_list.get(file_name).get('lines') # 変更行の合計
+            # file_list = commit.stats.files # ファイルごとの変更履歴（行）
+            # for file_name in file_list:
+            #     commit_files += 1
+            #     insertions += file_list.get(file_name).get('insertions') # 追加した行数
+            #     deletions  += file_list.get(file_name).get('deletions') # 削除した行数
+            #     lines      += file_list.get(file_name).get('lines') # 変更行の合計
 
     f.close()
 
@@ -66,6 +66,6 @@ def run(repo):
     print("・追加した行数：" + str(insertions))
     print("・削除した行数：" + str(deletions))
     print("・変更行の合計：" + str(lines))
-    print("コントリビュータ：")
-    for contributor in contributors:
+    print("コントリビュータ：" + str(len(contributors)))
+    for contributor in sorted(contributors, key=lambda c: c.commit_count, reverse=True):
         print(contributor)

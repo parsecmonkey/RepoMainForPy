@@ -8,7 +8,7 @@ class Contributor:
 
     # 情報のprint結果を定義
     def __repr__(self):
-        return "name: " + str(self.name) + " commit: " + str(self.commit_count)
+        return "commit: {:>4d} 【 {:s} 】".format(self.commit_count, str(self.name))
 
     # nameを更新
     def set_name(self, name):
