@@ -6,24 +6,24 @@ from tqdm import tqdm
 import contributor as con
 
 # コントリビュータの追加した行などを更新
-def add_con_lines(c, insertions, deletions):
+def add_con_lines(c, insertions, deletions): # c:contributors
     c.add_insertions(insertions) # 追加した行
     c.add_deletions(deletions) # 削除した行
 
 # コントリビュータの更新
-def set_contributor(c, author, insertions, deletions, commit):
+def set_contributor(c, author, insertions, deletions, commit): # c:contributors
     # リストの重複を確認して追加
     i = 0
     for j in range(len(c)):
         # authorが既に存在するか確認
-        if (author in c[i].get_name()):
+        if author in c[i].get_name():
             c[i].add_commit_count(1)
             add_con_lines(c[i], insertions, deletions)
             c[i].set_first_commit(commit.committed_datetime.strftime('%Y-%m-%d'))
             break
         i += 1
     # authorがまだ登録されていない場合、追加
-    if (i == len(c)):
+    if i == len(c):
         c.append(con.Contributor(author, 1))
         add_con_lines(c[i], insertions, deletions)
         c[i].set_last_commit(commit.committed_datetime.strftime('%Y-%m-%d'))

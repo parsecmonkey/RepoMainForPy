@@ -5,3 +5,4 @@ __pycache__
 /log/log.csv
 /log/contributors.csv
 /pic/commit_calendar.png
+/pic/commit_transition.png

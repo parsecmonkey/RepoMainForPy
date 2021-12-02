@@ -32,7 +32,7 @@ def run(repo):
         for commit in repo.iter_commits():
             commit_no =  int(sum_commits) - commit_count
 
-            if (commit_count != 0):
+            if commit_count != 0:
                 # print(repo.git.diff(hexsha + ".." + commit.hexsha)) # ファイルの差分を取得
 
                 search_lines(repo, hexsha_after, commit.hexsha, commit_no) # 変更行から文字を検索し、その行を抜き出す

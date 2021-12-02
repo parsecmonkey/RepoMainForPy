@@ -7,8 +7,8 @@ class Contributor:
         self.commit_count = commit_count
         self.insertions   = 0 # 追加した行数
         self.deletions    = 0 # 削除した行数
-        first_commit      = ""
-        last_commit       = ""
+        self.first_commit = "" # 最初のコミットの日時
+        self.last_commit  = "" # 最後のコミットの日時
 
     # 情報のprint結果を定義
     def __repr__(self):

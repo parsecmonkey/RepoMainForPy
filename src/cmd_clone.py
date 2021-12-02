@@ -27,7 +27,7 @@ def run(first_flag):
             rmtree(root_path) # projectフォルダが存在していれば削除
 
     clone_flag = True
-    while (clone_flag):
+    while clone_flag:
         try:
             # "://"でURLか判定
             if url.find("://"):
@@ -37,7 +37,7 @@ def run(first_flag):
 
             # 既にクローン済みの場合、pathの最後に(i)をつける
             i = 1
-            while (os.path.isdir(path)):
+            while os.path.isdir(path):
                 path = root_path + "/" + file_name + "({:d})".format(i)
                 i += 1
 
