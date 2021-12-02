@@ -24,13 +24,13 @@ def search_lines(repo, hexsha_after, hexsha_before, commit_no):
 def run(repo):
     sys.stdout = open('./log/diff.log',"w+", encoding="utf_8_sig") # 標準出力をdiff.logに変更
 
-    commits_size = repo.git.rev_list('--count', 'HEAD') # コミットの総数
+    sum_commits  = repo.git.rev_list('--count', 'HEAD') # コミットの総数
     commit_count = 0
     hexsha_after = "HEAD" # 差分取得用のハッシュ値（親）
 
-    with tqdm(total=int(commits_size), desc='diff.log') as pbar: # プログレスバーの設定
+    with tqdm(total=int(sum_commits), desc='diff.log') as pbar: # プログレスバーの設定
         for commit in repo.iter_commits():
-            commit_no =  int(commits_size) - commit_count
+            commit_no =  int(sum_commits) - commit_count
 
             if (commit_count != 0):
                 # print(repo.git.diff(hexsha + ".." + commit.hexsha)) # ファイルの差分を取得

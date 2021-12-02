@@ -3,4 +3,5 @@ __pycache__
 /log/commit_data.csv
 /log/diff.log
 /log/log.csv
+/log/contributors.csv
 /pic/commit_data.png
