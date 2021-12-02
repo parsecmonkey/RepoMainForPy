@@ -6,25 +6,27 @@ from tqdm import tqdm
 import contributor as con
 
 # コントリビュータの追加した行などを更新
-def add_con_lines(contributor, insertions, deletions):
-    contributor.add_insertions(insertions) # 追加した行
-    contributor.add_deletions(deletions) # 削除した行
+def add_con_lines(c, insertions, deletions):
+    c.add_insertions(insertions) # 追加した行
+    c.add_deletions(deletions) # 削除した行
 
 # コントリビュータの更新
-def set_contributor(contributors, author, insertions, deletions):
+def set_contributor(c, author, insertions, deletions, commit):
     # リストの重複を確認して追加
     i = 0
-    for j in range(len(contributors)):
+    for j in range(len(c)):
         # authorが既に存在するか確認
-        if (author in contributors[i].get_name()):
-            contributors[i].add_commit_count(1)
-            add_con_lines(contributors[i], insertions, deletions)
+        if (author in c[i].get_name()):
+            c[i].add_commit_count(1)
+            add_con_lines(c[i], insertions, deletions)
+            c[i].set_first_commit(commit.committed_datetime.strftime('%Y-%m-%d'))
             break
         i += 1
     # authorがまだ登録されていない場合、追加
-    if (i == len(contributors)):
-        contributors.append(con.Contributor(author, 1))
-        add_con_lines(contributors[i], insertions, deletions)
+    if (i == len(c)):
+        c.append(con.Contributor(author, 1))
+        add_con_lines(c[i], insertions, deletions)
+        c[i].set_last_commit(commit.committed_datetime.strftime('%Y-%m-%d'))
 
 def run(repo):
     # log.csv
@@ -81,7 +83,7 @@ def run(repo):
             commit_count += 1
 
             # コントリビュータを更新
-            set_contributor(contributors, str(commit.author), insertions, deletions)
+            set_contributor(contributors, str(commit.author), insertions, deletions, commit)
 
             sum_insertions += insertions
             sum_deletions  += deletions
@@ -98,8 +100,8 @@ def run(repo):
                 str(con.get_commit_count()) + "({:.1f})".format(commit_percent),
                 con.get_insertions(),
                 con.get_deletions(),
-                0,
-                0,
+                con.get_first_commit(),
+                con.get_last_commit(),
                 0,
                 rank])
             rank += 1
@@ -109,10 +111,11 @@ def run(repo):
     f_con.close()
 
     print("コミット数：" + sum_commits)
-    print("変更したファイル数：" + str(commit_files))
+    print("変更したファイル数(のべ)：" + str(commit_files))
     print("・追加した行数：" + str(sum_insertions))
     print("・削除した行数：" + str(sum_deletions))
-    print("・変更行の合計：" + str(lines))
+    print("・変更行の和　：" + str(lines))
+    print("・変更行の差　：" + str(sum_insertions - sum_deletions))
     print("コントリビュータ：" + str(len(contributors)))
     for contributor in sorted(contributors, key=lambda c: c.commit_count, reverse=True):
         print(contributor)

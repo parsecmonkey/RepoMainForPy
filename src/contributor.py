@@ -7,6 +7,8 @@ class Contributor:
         self.commit_count = commit_count
         self.insertions   = 0 # 追加した行数
         self.deletions    = 0 # 削除した行数
+        first_commit      = ""
+        last_commit       = ""
 
     # 情報のprint結果を定義
     def __repr__(self):
@@ -32,6 +34,14 @@ class Contributor:
     def set_insertions(self, deletions):
         self.deletions = deletions
 
+    # 最初のコミットの日時更新
+    def set_first_commit(self, commit_day):
+        self.first_commit = commit_day
+
+    # 最後のコミットの日時更新
+    def set_last_commit(self, commit_day):
+        self.last_commit = commit_day
+
     # -----------
     # --- get ---
     # -----------
@@ -51,6 +61,14 @@ class Contributor:
     # commit_countを取得
     def get_deletions(self):
         return self.deletions
+
+    # 最初のコミットの日時取得
+    def get_first_commit(self):
+        return self.first_commit
+
+    # 最後のコミットの日時取得
+    def get_last_commit(self):
+        return self.last_commit
 
     # -----------
     # --- add ---

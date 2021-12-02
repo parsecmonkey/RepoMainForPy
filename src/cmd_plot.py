@@ -68,7 +68,7 @@ def get_days_list():
 
 # 現在の年のコミットデータを作成
 def set_commit_data(repo, year_days, days_list, committed_year, committed_datetimes):
-    f = open("./log/commit_data.csv","w+", encoding="utf_8_sig", newline='')
+    f = open("./log/commit_calendar.csv","w+", encoding="utf_8_sig", newline='')
     csv_writer = csv.writer(f)
     csv_writer.writerow([
         'year',
@@ -83,7 +83,7 @@ def set_commit_data(repo, year_days, days_list, committed_year, committed_dateti
     day_count = 0
     week = 0
     # 現在の年の日ごとコミット数を計算
-    with tqdm(total=year_days, desc='commit_data.csv') as pbar: # プログレスバーの設定
+    with tqdm(total=year_days, desc='commit_calendar.csv') as pbar: # プログレスバーの設定
         for month in range(12):
             for day in range(calendar.monthrange(int(get_year()), month+1)[1]):
                 commit_count = committed_datetimes.count(days_list[day_count])
@@ -124,7 +124,7 @@ def run(repo):
     set_commit_data(repo, year_days, days_list, committed_year, committed_datetimes)
 
     # CSV読み込み
-    df = pd.read_csv("./log/commit_data.csv",sep=",")
+    df = pd.read_csv("./log/commit_calendar.csv",sep=",")
     df.columns = ['year','month','month_en','day','dow_no','dow', 'week', 'commit']
     df = df.pivot('dow_no','week','commit')
     
@@ -147,4 +147,4 @@ def run(repo):
         [mcp[0], mcp[1], mcp[2], mcp[3], mcp[4], mcp[5], mcp[6], mcp[7], mcp[8], mcp[9], mcp[10], mcp[11]],
         ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'])
     # plt.show() # プロット表示
-    plt.savefig("pic/commit_data.png", tight_layout=True) # グラフを画像で保存
+    plt.savefig("pic/commit_calendar.png", tight_layout=True) # グラフを画像で保存
