@@ -95,7 +95,7 @@ def run(repo):
             commit_percent = con.get_commit_count() / int(sum_commits) * 100
             csv_con.writerow([
                 con.get_name(),
-                str(con.get_commit_count()) + "（{:.1f}）".format(commit_percent),
+                str(con.get_commit_count()) + "({:.1f})".format(commit_percent),
                 con.get_insertions(),
                 con.get_deletions(),
                 0,

@@ -35,13 +35,15 @@ def run(first_flag):
 
             path = root_path + "/" + file_name # project/..
 
+            # 既にクローン済みの場合、pathの最後に(i)をつける
+            i = 1
+            while (os.path.isdir(path)):
+                path = root_path + "/" + file_name + "({:d})".format(i)
+                i += 1
+
             repo.clone_repo(url, path) # レポジトリをクローン
             print("レポジトリをクローンしました\n")
             clone_flag = False
         except Exception as err:
-            if os.path.isdir(path):
-                print("すでにクローン済みです\n")
-                clone_flag = False
-            else:
-                print("レポジトリをクローン出来ませんでした\nもう一度、入力してください")
-                url = input(">>> ")
+            print("レポジトリをクローン出来ませんでした\nもう一度、入力してください")
+            url = input(">>> ")
