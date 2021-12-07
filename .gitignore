@@ -1,6 +1,7 @@
 /project
 __pycache__
 /log/commit_calendar.csv
+/log/commit_transition.csv
 /log/diff.log
 /log/log.csv
 /log/contributors.csv

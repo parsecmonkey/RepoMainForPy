@@ -126,14 +126,35 @@ def get_dayslist(committed_datetimes, sum_commits):
 
     return dayslist
 
-# コミットの合計値を日付順で計算
-def get_sum_commit_list(committed_datetimes, dayslist):
-    sum_commit = 0 # コミット合計
-    sum_commit_list = []
-    for day in dayslist:
-        sum_commit += committed_datetimes.count(str(day))
-        sum_commit_list.append(sum_commit)
-    return sum_commit_list
+# コミットの合計値を日付順で計算し、csvに出力
+def set_commit_transition(committed_datetimes, dayslist):
+    f = open("./log/commit_transition.csv","w+", encoding="utf_8_sig", newline='')
+    csv_writer = csv.writer(f)
+    csv_writer.writerow([
+        'day',
+        'commit',
+        'sum commit']) # csvヘッダー追加
+
+    day_commitlist = []
+    sum_commitlist = []
+    sum_commit = 0
+    # 現在の年の日ごとコミット数を計算
+    with tqdm(total=len(dayslist), desc='commit_transition.csv') as pbar: # プログレスバーの設定
+        for day in dayslist: # コミットの合計値を日付順で計算
+            day_commits = committed_datetimes.count(str(day))
+            day_commitlist.append(day_commits)
+            sum_commit += day_commits
+            sum_commitlist.append(sum_commit)
+
+            csv_writer.writerow([
+                day,
+                day_commits,
+                sum_commit]) # csvファイルに書き込み
+
+            pbar.update(1) # プログレスバーの進捗率を更新
+
+    f.close()
+    return day_commitlist, sum_commitlist
 
 def run(repo):
 
@@ -148,7 +169,7 @@ def run(repo):
         committed_datetimes.append(commit.committed_datetime.strftime('%Y-%m-%d'))
 
     dayslist = get_dayslist(committed_datetimes, sum_commits) # 日付差の日数を算出
-    sum_commit_list = get_sum_commit_list(committed_datetimes, dayslist) # コミットの合計値を日付順で計算
+    day_commitlist, sum_commitlist = set_commit_transition(committed_datetimes, dayslist) # コミットの合計値を日付順で計算
 
     # ------------
     # --- fig1 ---
@@ -196,7 +217,8 @@ def run(repo):
 
     fig2, ax2 = plt.subplots(figsize=(10, 5))
 
-    ax2.plot(dayslist, sum_commit_list, linestyle="-.", marker=".", color="forestgreen")
+    ax2.plot(dayslist, sum_commitlist, label="sum", linestyle="-", marker="", color="lightseagreen")
+    ax2.plot(dayslist, day_commitlist, label="1day", linestyle="-", marker="", color="lightcoral")
     ax2.grid(b=True, which='major', color='gray', linestyle='-', linewidth=0.5, alpha=0.3)
     ax2.minorticks_on()
     ax2.spines['right'].set_visible(False)
@@ -206,5 +228,8 @@ def run(repo):
     ax2.set_title("commit transition")
     ax2.set_xlabel('date')
     ax2.set_ylabel('commits')
+    ax2.legend()
+    ax2.fill_between(dayslist, 0, day_commitlist, facecolor='lightcoral', alpha=0.3)
+    ax2.fill_between(dayslist, day_commitlist, sum_commitlist, facecolor='lightseagreen', alpha=0.3)
 
     fig2.savefig("pic/commit_transition.png", tight_layout=True)
