@@ -59,6 +59,7 @@ def run(repo):
     sum_insertions = 0 # 追加した行数の合計
     sum_deletions  = 0 # 削除した行数の合計
     lines          = 0 # 変更行の合計
+    merge_count    = 0 # マージコミット数
     contributors   = []
     with tqdm(total=int(sum_commits), desc='log.csv') as pbar: # プログレスバーの設定
         for commit in repo.iter_commits():
@@ -88,6 +89,10 @@ def run(repo):
             sum_insertions += insertions
             sum_deletions  += deletions
 
+            # マージコミット数を計測
+            if commit.message.startswith("Merge pull request"):
+                merge_count += 1
+
             pbar.update(1) # プログレスバーの進捗率を更新
 
     rank = 1
@@ -111,6 +116,7 @@ def run(repo):
     f_con.close()
 
     print("コミット数：" + sum_commits)
+    print("マージコミット数：" + str(merge_count))
     print("変更したファイル数(のべ)：" + str(commit_files))
     print("・追加した行数：" + str(sum_insertions))
     print("・削除した行数：" + str(sum_deletions))
