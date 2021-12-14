@@ -13,6 +13,7 @@ A sample program for repository mining using GitPython.
 - Python 3.10.0
 - Git 2.29.2.windows.3
 - GitPython 3.1.24
+- mecab 0.996
 
 ## Pip install
 ```
@@ -31,6 +32,10 @@ $ pip install seaborn
 
 ```
 $ pip install tqdm
+```
+
+```
+$ pip install mecab
 ```
 
 ## Execution method

@@ -215,7 +215,7 @@ def run(repo):
 
     # --- fig2 ---
 
-    fig2, ax2 = plt.subplots(figsize=(10, 5))
+    fig2, ax2 = plt.subplots(figsize=(12, 7))
 
     ax2.plot(dayslist, sum_commitlist, label="sum", linestyle="-", marker="", color="lightseagreen")
     ax2.plot(dayslist, day_commitlist, label="1day", linestyle="-", marker="", color="lightcoral")
@@ -227,9 +227,10 @@ def run(repo):
     ax2.spines['left'].set_visible(False)
     ax2.set_title("commit transition")
     ax2.set_xlabel('date')
+    ax2.xaxis.set_tick_params(rotation=10)
     ax2.set_ylabel('commits')
     ax2.legend()
     ax2.fill_between(dayslist, 0, day_commitlist, facecolor='lightcoral', alpha=0.3)
     ax2.fill_between(dayslist, day_commitlist, sum_commitlist, facecolor='lightseagreen', alpha=0.3)
 
-    fig2.savefig("pic/commit_transition.png", tight_layout=True)
+    fig2.savefig("pic/commit_transition.png")
