@@ -38,6 +38,10 @@ $ pip install tqdm
 $ pip install mecab
 ```
 
+```
+$ pip install wordcloud
+```
+
 ## Execution method
 ```
 $ python src/main.py

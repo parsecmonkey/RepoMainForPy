@@ -55,7 +55,7 @@ class WordCloudGenerator:
 
 def run(repo):
     # 入力テキストファイル
-    OUT_FILE_NAME = "output/output_wordcloud.png"
+    OUT_FILE_NAME = "pic/wordcloud_message.png"
 
     # commit message を取得
     TEXT = ""
@@ -76,10 +76,13 @@ def run(repo):
     wordCloudGenerator.out_file_name = OUT_FILE_NAME  # 出力ファイル名
     wordCloudGenerator.wordcloud_draw(wakati)  # 出力
 
+    print(f"{OUT_FILE_NAME}に画像を出力しました")
+    print()
+
 
 if __name__ == "__main__":
     # 入力テキストファイル
-    OUT_FILE_NAME = "output/output_wordcloud.png"
+    OUT_FILE_NAME = "pic/wordcloud_message.png"
 
     TEXT = "吾輩は吾輩である．名前は吾輩である．"
 
