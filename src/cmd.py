@@ -5,6 +5,8 @@ import cmd_clone
 import cmd_log
 import cmd_diff
 import cmd_plot
+import cmd_message
+
 
 def search(repo, cmd):
     # help
@@ -30,6 +32,11 @@ def search(repo, cmd):
     # plot
     elif (cmd == "plot"):
         cmd_plot.run(repo)
+        return True
+
+    # message
+    elif(cmd == "message"):
+        cmd_message.run(repo)
         return True
 
     # exit
