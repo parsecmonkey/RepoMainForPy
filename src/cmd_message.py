@@ -3,12 +3,10 @@ from wordcloud import WordCloud
 import collections
 
 
-Wakati_tagger = MeCab.Tagger("-Owakati")  # 分かち書き
-
-
 def mecab_wakati(text):
     # 形態素解析を行う
-    parse = Wakati_tagger.parse(text)
+    wakati_tagger = MeCab.Tagger("-Owakati")  # 分かち書き
+    parse = wakati_tagger.parse(text)
     return parse
 
 
@@ -61,6 +59,8 @@ def run(repo):
 
     # commit message を取得
     TEXT = ""
+    for commit in repo.iter_commits():
+        TEXT += commit.message
 
     #### パラメータ ####
     STOP_WORDS = ["　"]  # ストップワード
