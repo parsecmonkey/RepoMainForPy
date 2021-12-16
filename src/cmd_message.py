@@ -67,7 +67,7 @@ def run(repo):
     MAX_WORDS = 2000  # 出力個数の上限
     WIDTH = 500  # 出力画像の幅
     HEIGHT = 500  # 出力画像の高さ
-    FONT_FILE = "C:\Windows\Fonts\MSGOTHIC.TTC"  # フォントファイルのパス
+    FONT_FILE = "data/ipaexg.ttf"  # フォントファイルのパス
 
     wakati = mecab_wakati(TEXT)  # 形態素解析
 
@@ -91,7 +91,7 @@ if __name__ == "__main__":
     MAX_WORDS = 2000  # 出力個数の上限
     WIDTH = 500  # 出力画像の幅
     HEIGHT = 500  # 出力画像の高さ
-    FONT_FILE = "C:\Windows\Fonts\MSGOTHIC.TTC"  # フォントファイルのパス
+    FONT_FILE = "data/ipaexg.ttf"  # フォントファイルのパス
 
     wakati = mecab_wakati(TEXT)  # 形態素解析
 
