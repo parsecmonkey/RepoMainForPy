@@ -4,10 +4,26 @@ import collections
 
 
 def mecab_wakati(text):
-    # 形態素解析を行う
+    # 形態素解析を行う(分かち書き)
     wakati_tagger = MeCab.Tagger("-Owakati")  # 分かち書き
     parse = wakati_tagger.parse(text)
     return parse
+
+
+def mecab(text):
+    # 形態素解析を行い品詞リストを返す
+    tagger = MeCab.Tagger()
+    tagger.parse("")
+    node = tagger.parseToNode(text)
+
+    node_list = []
+    while node:
+        # 例: ['吾輩', '名詞', '代名詞', '一般', '*', '*', '*', '吾輩', 'ワガハイ', 'ワガハイ']
+        node_list.append([node.surface]+node.feature.split(","))
+        node = node.next
+    node_list = node_list[1:-1]  # BOS/EOSタグを除外
+
+    return node_list
 
 
 class WordCloudGenerator:
@@ -62,6 +78,17 @@ def run(repo):
     for commit in repo.iter_commits():
         TEXT += commit.message
 
+    # 形態素解析
+    mecab_all = mecab(TEXT)  # 形態素解析
+
+    part_of_speech = {"名詞"}  # 出力する品詞リスト
+
+    # 出力する品詞リストに含まれる形態素のみ抽出
+    mecab_only_noun = []
+    for feature in mecab_all:
+        if feature[1] in part_of_speech:
+            mecab_only_noun.append(feature[0])
+
     #### パラメータ ####
     STOP_WORDS = ["　"]  # ストップワード
     MAX_WORDS = 2000  # 出力個数の上限
@@ -69,7 +96,7 @@ def run(repo):
     HEIGHT = 500  # 出力画像の高さ
     FONT_FILE = "data/ipaexg.ttf"  # フォントファイルのパス
 
-    wakati = mecab_wakati(TEXT)  # 形態素解析
+    wakati = " ".join(mecab_only_noun)  # 分かち書き
 
     wordCloudGenerator = WordCloudGenerator(font_path=FONT_FILE, background_color="white", width=WIDTH, height=HEIGHT, collocations=False,
                                             stopwords=STOP_WORDS, max_words=MAX_WORDS, regexp=r"[\w']+")  # WordCloud初期化
@@ -84,7 +111,18 @@ if __name__ == "__main__":
     # 入力テキストファイル
     OUT_FILE_NAME = "pic/wordcloud_message.png"
 
-    TEXT = "吾輩は吾輩である．名前は吾輩である．"
+    TEXT = "吾輩は吾輩である．名前はスーパー吾輩である．Yes, I am wagahai."
+
+    mecab_all = mecab(TEXT)  # 形態素解析
+
+    # 出力する品詞リスト
+    part_of_speech = {"名詞"}
+
+    mecab_only_noun = []
+    for feature in mecab_all:
+        if feature[1] in part_of_speech:
+            mecab_only_noun.append(feature[0])
+    print(mecab_only_noun)
 
     #### パラメータ ####
     STOP_WORDS = ["　"]  # ストップワード
@@ -93,7 +131,8 @@ if __name__ == "__main__":
     HEIGHT = 500  # 出力画像の高さ
     FONT_FILE = "data/ipaexg.ttf"  # フォントファイルのパス
 
-    wakati = mecab_wakati(TEXT)  # 形態素解析
+    # wakati = mecab_wakati(TEXT)  # 分かち書き
+    wakati = " ".join(mecab_only_noun)  # 分かち書き
 
     wordCloudGenerator = WordCloudGenerator(font_path=FONT_FILE, background_color="white", width=WIDTH, height=HEIGHT, collocations=False,
                                             stopwords=STOP_WORDS, max_words=MAX_WORDS, regexp=r"[\w']+")  # WordCloud初期化
