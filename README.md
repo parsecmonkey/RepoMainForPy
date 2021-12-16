@@ -81,3 +81,9 @@ $ plot
 $ exit
 ```
 session end
+
+
+## Font
+IPAex font is used in this system. Please refer to the link for the license of the font.
+
+[IPAex Font](IPAhttps://moji.or.jp/ipafont/ipaex00401/)
