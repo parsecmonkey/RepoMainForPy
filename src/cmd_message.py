@@ -3,14 +3,14 @@ from wordcloud import WordCloud
 import collections
 
 
-def mecab_wakati(text):
+def _mecab_wakati(text):
     # 形態素解析を行う(分かち書き)
     wakati_tagger = MeCab.Tagger("-Owakati")  # 分かち書き
     parse = wakati_tagger.parse(text)
     return parse
 
 
-def mecab(text):
+def _mecab(text):
     # 形態素解析を行い品詞リストを返す
     tagger = MeCab.Tagger()
     tagger.parse("")
@@ -69,17 +69,27 @@ class WordCloudGenerator:
         return word_freq
 
 
+def _all_get_commit_message(repo):
+    """
+    すべてのcommit messageを取得する
+    """
+    all_commit_message = ""
+    with open("temp.txt", "w", encoding="utf-8") as f:
+        for commit in repo.iter_commits():
+            all_commit_message += commit.message
+            f.write(commit.message+"\n")
+    return all_commit_message
+
+
 def run(repo):
     # 入力テキストファイル
     OUT_FILE_NAME = "pic/wordcloud_message.png"
 
     # commit message を取得
-    TEXT = ""
-    for commit in repo.iter_commits():
-        TEXT += commit.message
+    TEXT = _all_get_commit_message(repo)
 
     # 形態素解析
-    mecab_all = mecab(TEXT)  # 形態素解析
+    mecab_all = _mecab(TEXT)  # 形態素解析
 
     # 名詞及び名詞連結を取得#
     mecab_linking_noun = []
@@ -89,6 +99,8 @@ def run(repo):
                 mecab_all[m][0]+mecab_all[m+1][0])
         elif mecab_all[m][1] == "名詞":
             mecab_linking_noun.append(mecab_all[m][0])
+        else:
+            pass
 
     #### パラメータ ####
     STOP_WORDS = ["　"]  # ストップワード
@@ -109,12 +121,11 @@ def run(repo):
 
 
 if __name__ == "__main__":
-    # 入力テキストファイル
     OUT_FILE_NAME = "pic/wordcloud_message.png"
 
     TEXT = "吾輩は吾輩である．名前はスーパー吾輩である．Yes, I am wagahai."
 
-    mecab_all = mecab(TEXT)  # 形態素解析
+    mecab_all = _mecab(TEXT)  # 形態素解析
 
     # 名詞及び名詞連結を取得#
     mecab_linking_noun = []
