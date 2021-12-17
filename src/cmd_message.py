@@ -77,7 +77,12 @@ def _all_get_commit_message(repo):
     with open("temp.txt", "w", encoding="utf-8") as f:
         for commit in repo.iter_commits():
             all_commit_message += commit.message
-            f.write(commit.message+"\n")
+
+            try:
+                f.write(commit.author)
+            except TypeError:
+                pass
+            f.write(","+commit.message+"\n")
     return all_commit_message
 
 
