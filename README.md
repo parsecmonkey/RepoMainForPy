@@ -80,7 +80,7 @@ $ plot
 ```
 $ message
 ```
-![sample_message.png](https://github.com/parsecmonkey/RepoMainForPy/blob/main/pic/sample_message.png "sample_message.png")
+<img alt="sample_message.png" src="https://github.com/parsecmonkey/RepoMainForPy/blob/main/pic/sample_message.png" width="30%">
 
 ### exit
 ```
