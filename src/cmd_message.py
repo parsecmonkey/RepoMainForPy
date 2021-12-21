@@ -3,6 +3,8 @@ from wordcloud import WordCloud
 import collections
 import csv as c
 from tqdm import tqdm
+import seaborn as sns
+import matplotlib.pyplot as plt
 
 
 def mecab_wakati(text):
@@ -115,7 +117,8 @@ def run(repo):
             else:
                 key_match_count += 1
 
-            TEXT += commit.message
+            if not commit.message.startswith('Merge'):
+                TEXT += commit.message
 
             # message.csvに書き込み
             csv.writerow([
@@ -156,6 +159,14 @@ def run(repo):
                                             stopwords=STOP_WORDS, max_words=MAX_WORDS, regexp=r"[\w']+")  # WordCloud初期化
     wordCloudGenerator.out_file_name = OUT_FILE_NAME  # 出力ファイル名
     wordCloudGenerator.wordcloud_draw(wakati)  # 出力
+
+    # 単語の頻出頻度
+    frequency_words = wordCloudGenerator.frequency_count(wakati).most_common(30)
+    sns.set(context="talk", font='Yu Gothic')
+    fig = plt.subplots(figsize=(18, 8))
+    sns.countplot(y=mecab_linking_noun,order=[i[0] for i in frequency_words])
+    plt.savefig("pic/frequency_words.png")
+    print("pic/frequency_words.pngに画像を出力しました")
 
     print(f"{OUT_FILE_NAME}に画像を出力しました")
     print()
