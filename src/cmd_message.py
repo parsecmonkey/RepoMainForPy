@@ -82,7 +82,7 @@ class WordCloudGenerator:
         return word_freq
 
 
-def _all_get_commit_message(repo):
+def _get_all_commit_message(repo):
     """
     すべてのcommit messageを取得する
     """
@@ -110,53 +110,57 @@ def _get_commit_message_by_author(repo, author):
     return commit_message
 
 
-def run(repo):
-    # message.csv
-    f = open("./log/message.csv", "w+", encoding="utf_8_sig", newline='')
-    csv = c.writer(f)
-    # csvヘッダー追加
-    csv.writerow([
-        'commit_no',
-        'message',
-        'len',
-        'key_flag',
-        'keyword',
-        'marp_flag'
-        'morpheme'])
+def _wordcloud_all_messages(repo):
+    """
+        すべてのcommit messageでwordcloudを作成する
+    """
 
-    sum_commits = repo.git.rev_list('--count', 'HEAD')  # コミットの総数
-    commit_count = 0
-    sum_message_len = 0  # メッセージの文字数合計
-    key_match_count = 0  # キーワードの一致回数合計
-    # commit message を取得
-    TEXT = ""
-    with tqdm(total=int(sum_commits), desc='message.csv') as pbar:  # プログレスバーの設定
-        for commit in repo.iter_commits():
-            commit_no = int(sum_commits) - commit_count
-            message_len = int(len(commit.message)) - 1
-            sum_message_len += message_len
-            keyword = keyword_analy(commit.message)
-            key_flag = len(keyword)
-            if key_flag == 0:
-                keyword = "none"
-            else:
-                key_match_count += 1
+    # 入力テキストファイル
+    OUT_FILE_NAME = "pic/wordcloud_message.png"
 
-            TEXT += commit.message
+    # 形態素解析
+    text = _get_all_commit_message(repo)
+    mecab_all = _mecab(text)  # 形態素解析
 
-            # message.csvに書き込み
-            csv.writerow([
-                commit_no,
-                commit.message,
-                message_len,
-                key_flag,
-                keyword,
-                0,
-                "none"])
+    # 名詞及び名詞連結を取得#
+    """
+    名詞連結は，現状うまく動かないので，一旦コメントアウト
+    """
+    # mecab_linking_noun = []
+    # for m in range(len(mecab_all)-1):
+    #     if mecab_all[m][1] == "名詞" and mecab_all[m+1][1] == "名詞":
+    #         mecab_linking_noun.append(
+    #             mecab_all[m][0]+mecab_all[m+1][0])
+    #     elif mecab_all[m][1] == "名詞":
+    #         mecab_linking_noun.append(mecab_all[m][0])
+    #     else:
+    #         pass
 
-            commit_count += 1
+    mecab_only_noun = [m[0] for m in mecab_all if m[1] == "名詞"]  # 名詞のみ取得
 
-            pbar.update(1)  # プログレスバーの進捗率を更新
+    #### パラメータ ####
+    STOP_WORDS = ["　"]  # ストップワード
+    MAX_WORDS = 2000  # 出力個数の上限
+    WIDTH = 500  # 出力画像の幅
+    HEIGHT = 500  # 出力画像の高さ
+    FONT_FILE = "data/ipaexg.ttf"  # フォントファイルのパス
+
+    wakati = " ".join(mecab_only_noun)  # 分かち書き
+
+    wordCloudGenerator = WordCloudGenerator(font_path=FONT_FILE, background_color="white", width=WIDTH, height=HEIGHT, collocations=False,
+                                            stopwords=STOP_WORDS, max_words=MAX_WORDS, regexp=r"[\w']+")  # WordCloud初期化
+    wordCloudGenerator.out_file_name = OUT_FILE_NAME  # 出力ファイル名
+    wordCloudGenerator.wordcloud_draw(wakati)  # 出力
+
+    print(f"{wordCloudGenerator.out_file_name}に画像を出力しました")
+
+    print()
+
+
+def _wordcloud_by_author(repo):
+    """
+        authorごとにwordcloudを作成する
+    """
 
     # 入力テキストファイル
     OUT_FILE_NAME = "pic/wordcloud_message_{}.png"
@@ -169,11 +173,13 @@ def run(repo):
     # 各authorのcommit messageを取得
     authors_text = dict()
     for author in authors:
-        # authorの名前は一緒だが，メアドが違う場合があるので，その対応
-        if author in authors_text:
-            authors_text[author] += _get_commit_message_by_author(repo, author)
+        # authorの名前は一緒だが，メアドが違う場合があるとき，同じauthorとみなしてmessageを結合する
+        if author.name in authors_text:
+            authors_text[author.name] += _get_commit_message_by_author(
+                repo, author)
         else:
-            authors_text[author] = _get_commit_message_by_author(repo, author)
+            authors_text[author.name] = _get_commit_message_by_author(
+                repo, author)
 
     for author, text in authors_text.items():
         # 形態素解析
@@ -214,6 +220,58 @@ def run(repo):
 
     print("すべてのcontributorのwordcloudを出力しました")
     print()
+
+
+def run(repo):
+    # message.csv
+    f = open("./log/message.csv", "w+", encoding="utf_8_sig", newline='')
+    csv = c.writer(f)
+    # csvヘッダー追加
+    csv.writerow([
+        'commit_no',
+        'message',
+        'len',
+        'key_flag',
+        'keyword',
+        'marp_flag'
+        'morpheme'])
+
+    sum_commits = repo.git.rev_list('--count', 'HEAD')  # コミットの総数
+    commit_count = 0
+    sum_message_len = 0  # メッセージの文字数合計
+    key_match_count = 0  # キーワードの一致回数合計
+    # commit message を取得
+    with tqdm(total=int(sum_commits), desc='message.csv') as pbar:  # プログレスバーの設定
+        for commit in repo.iter_commits():
+            commit_no = int(sum_commits) - commit_count
+            message_len = int(len(commit.message)) - 1
+            sum_message_len += message_len
+            keyword = keyword_analy(commit.message)
+            key_flag = len(keyword)
+            if key_flag == 0:
+                keyword = "none"
+            else:
+                key_match_count += 1
+
+            # message.csvに書き込み
+            csv.writerow([
+                commit_no,
+                commit.message,
+                message_len,
+                key_flag,
+                keyword,
+                0,
+                "none"])
+
+            commit_count += 1
+
+            pbar.update(1)  # プログレスバーの進捗率を更新
+
+    """
+        wordcloud生成処理
+    """
+    _wordcloud_by_author(repo)  # authorごとにwordcloudを作成
+    # _wordcloud_all_messages(repo)  # 全メッセージをwordcloudにして出力
 
     print("---メッセージ解析結果---")
     print("総メッセージ数：" + sum_commits)
