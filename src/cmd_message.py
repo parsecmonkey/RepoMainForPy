@@ -97,15 +97,20 @@ def run(repo):
     mecab_all = _mecab(TEXT)  # 形態素解析
 
     # 名詞及び名詞連結を取得#
-    mecab_linking_noun = []
-    for m in range(len(mecab_all)-1):
-        if mecab_all[m][1] == "名詞" and mecab_all[m+1][1] == "名詞":
-            mecab_linking_noun.append(
-                mecab_all[m][0]+mecab_all[m+1][0])
-        elif mecab_all[m][1] == "名詞":
-            mecab_linking_noun.append(mecab_all[m][0])
-        else:
-            pass
+    """
+    名詞連結は，現状うまく動かないので，一旦コメントアウト
+    """
+    # mecab_linking_noun = []
+    # for m in range(len(mecab_all)-1):
+    #     if mecab_all[m][1] == "名詞" and mecab_all[m+1][1] == "名詞":
+    #         mecab_linking_noun.append(
+    #             mecab_all[m][0]+mecab_all[m+1][0])
+    #     elif mecab_all[m][1] == "名詞":
+    #         mecab_linking_noun.append(mecab_all[m][0])
+    #     else:
+    #         pass
+
+    mecab_only_noun = [m[0] for m in mecab_all if m[1] == "名詞"]  # 名詞のみ取得
 
     #### パラメータ ####
     STOP_WORDS = ["　"]  # ストップワード
@@ -114,7 +119,7 @@ def run(repo):
     HEIGHT = 500  # 出力画像の高さ
     FONT_FILE = "data/ipaexg.ttf"  # フォントファイルのパス
 
-    wakati = " ".join(mecab_linking_noun)  # 分かち書き
+    wakati = " ".join(mecab_only_noun)  # 分かち書き
 
     wordCloudGenerator = WordCloudGenerator(font_path=FONT_FILE, background_color="white", width=WIDTH, height=HEIGHT, collocations=False,
                                             stopwords=STOP_WORDS, max_words=MAX_WORDS, regexp=r"[\w']+")  # WordCloud初期化
@@ -133,16 +138,20 @@ if __name__ == "__main__":
     mecab_all = _mecab(TEXT)  # 形態素解析
 
     # 名詞及び名詞連結を取得#
-    mecab_linking_noun = []
-    for m in range(len(mecab_all)-1):
-        if mecab_all[m][1] == "名詞" and mecab_all[m+1][1] == "名詞":
-            mecab_linking_noun.append(
-                mecab_all[m][0]+mecab_all[m+1][0])
-        elif mecab_all[m][1] == "名詞":
-            mecab_linking_noun.append(mecab_all[m][0])
-    print(mecab_linking_noun)
+    """
+    名詞連結は，現状うまく動かないので，一旦コメントアウト
+    """
+    # mecab_linking_noun = []
+    # for m in range(len(mecab_all)-1):
+    #     if mecab_all[m][1] == "名詞" and mecab_all[m+1][1] == "名詞":
+    #         mecab_linking_noun.append(
+    #             mecab_all[m][0]+mecab_all[m+1][0])
+    #     elif mecab_all[m][1] == "名詞":
+    #         mecab_linking_noun.append(mecab_all[m][0])
+    #     else:
+    #         pass
 
-    # exit(0)
+    mecab_only_noun = [m[0] for m in mecab_all if m[1] == "名詞"]  # 名詞のみ取得
 
     #### パラメータ ####
     STOP_WORDS = ["　"]  # ストップワード
@@ -151,8 +160,7 @@ if __name__ == "__main__":
     HEIGHT = 500  # 出力画像の高さ
     FONT_FILE = "data/ipaexg.ttf"  # フォントファイルのパス
 
-    # wakati = mecab_wakati(TEXT)  # 分かち書き
-    wakati = " ".join(mecab_linking_noun)  # 分かち書き
+    wakati = " ".join(mecab_only_noun)  # 分かち書き
 
     wordCloudGenerator = WordCloudGenerator(font_path=FONT_FILE, background_color="white", width=WIDTH, height=HEIGHT, collocations=False,
                                             stopwords=STOP_WORDS, max_words=MAX_WORDS, regexp=r"[\w']+")  # WordCloud初期化
