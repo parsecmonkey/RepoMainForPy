@@ -2,6 +2,7 @@ import MeCab
 from wordcloud import WordCloud
 import collections
 import csv as c
+from tqdm import tqdm
 
 
 def mecab_wakati(text):
@@ -30,11 +31,10 @@ def mecab(text):
 # キーワード解析
 def keyword_analy(text):
     key_out = []
-    key_list = ["ように", "修正", "追加", "削除", "作成", "変更", "編集", "更新", "整理", "調整"]
+    key_list = ["ように", "修正", "追加", "削除", "作成", "変更", "編集", "更新", "整理", "調整", "実装"]
     for key in key_list:
         if key in text:
             key_out.append(key)
-
     return key_out
 
 
@@ -91,6 +91,7 @@ def run(repo):
     csv.writerow([
         'commit_no',
         'message',
+        'len',
         'key_flag',
         'keyword',
         'marp_flag'
@@ -98,27 +99,37 @@ def run(repo):
 
     sum_commits    = repo.git.rev_list('--count', 'HEAD') # コミットの総数
     commit_count   = 0
+    sum_message_len = 0 # メッセージの文字数合計
+    key_match_count = 0 # キーワードの一致回数合計
     # commit message を取得
     TEXT = ""
-    for commit in repo.iter_commits():
-        commit_no =  int(sum_commits) - commit_count
-        keyword  = keyword_analy(commit.message)
-        key_flag = len(keyword)
-        if key_flag == 0:
-            keyword = "none"
+    with tqdm(total=int(sum_commits), desc='message.csv') as pbar: # プログレスバーの設定
+        for commit in repo.iter_commits():
+            commit_no =  int(sum_commits) - commit_count
+            message_len = int(len(commit.message)) - 1
+            sum_message_len += message_len
+            keyword  = keyword_analy(commit.message)
+            key_flag = len(keyword)
+            if key_flag == 0:
+                keyword = "none"
+            else:
+                key_match_count += 1
 
-        TEXT += commit.message
+            TEXT += commit.message
 
-        # message.csvに書き込み
-        csv.writerow([
-            commit_no,
-            commit.message,
-            key_flag,
-            keyword,
-            0,
-            "none"])
+            # message.csvに書き込み
+            csv.writerow([
+                commit_no,
+                commit.message,
+                message_len,
+                key_flag,
+                keyword,
+                0,
+                "none"])
 
-        commit_count += 1
+            commit_count += 1
+
+            pbar.update(1) # プログレスバーの進捗率を更新
 
     # 形態素解析
     mecab_all = mecab(TEXT)  # 形態素解析
@@ -147,6 +158,12 @@ def run(repo):
     wordCloudGenerator.wordcloud_draw(wakati)  # 出力
 
     print(f"{OUT_FILE_NAME}に画像を出力しました")
+    print()
+
+    print("---メッセージ解析結果---")
+    print("総メッセージ数：" + sum_commits)
+    print("文字数の平均：{:.1f}".format(sum_message_len/int(sum_commits)))
+    print("キーワード一致回数：" + str(key_match_count))
     print()
 
     f.close()
