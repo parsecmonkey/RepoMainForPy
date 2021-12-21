@@ -74,7 +74,13 @@ $ diff
 ```
 $ plot
 ```
-![sample.png](https://github.com/parsecmonkey/RepoMainForPy/blob/main/pic/sample.png "sample.png")
+![sample_plot.png](https://github.com/parsecmonkey/RepoMainForPy/blob/main/pic/sample_plot.png "sample_plot.png")
+
+### message
+```
+$ message
+```
+![sample_message.png](https://github.com/parsecmonkey/RepoMainForPy/blob/main/pic/sample_message.png "sample_message.png")
 
 ### exit
 ```
