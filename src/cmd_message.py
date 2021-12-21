@@ -3,6 +3,8 @@ from wordcloud import WordCloud
 import collections
 import csv as c
 from tqdm import tqdm
+import seaborn as sns
+import matplotlib.pyplot as plt
 
 
 def _mecab_wakati(text):
@@ -89,7 +91,9 @@ def _get_all_commit_message(repo):
     all_commit_message = ""
     with open("temp.txt", "w", encoding="utf-8") as f:
         for commit in repo.iter_commits():
-            all_commit_message += commit.message
+            # Mergeから始まるcommit messageは除外
+            if not commit.message.startswith('Merge'):
+                all_commit_message += commit.message
 
             try:
                 f.write(commit.author)
@@ -106,7 +110,9 @@ def _get_commit_message_by_author(repo, author):
     commit_message = ""
     for commit in repo.iter_commits():
         if commit.author == author:
-            commit_message += commit.message
+            # Mergeから始まるcommit messageは除外
+            if not commit.message.startswith('Merge'):
+                commit_message += commit.message
     return commit_message
 
 
@@ -272,6 +278,15 @@ def run(repo):
     """
     _wordcloud_by_author(repo)  # authorごとにwordcloudを作成
     # _wordcloud_all_messages(repo)  # 全メッセージをwordcloudにして出力
+
+    # 単語の頻出頻度
+    frequency_words = wordCloudGenerator.frequency_count(
+        wakati).most_common(30)
+    sns.set(context="talk", font='Yu Gothic')
+    fig = plt.subplots(figsize=(18, 8))
+    sns.countplot(y=mecab_only_noun, order=[i[0] for i in frequency_words])
+    plt.savefig("pic/frequency_words.png")
+    print("pic/frequency_words.pngに画像を出力しました")
 
     print("---メッセージ解析結果---")
     print("総メッセージ数：" + sum_commits)
