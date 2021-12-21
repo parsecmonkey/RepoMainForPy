@@ -1,7 +1,7 @@
 # main
 
 import color
-import cmd
+import cmd_seek
 import cmd_clone
 import repo
 
@@ -26,7 +26,7 @@ def main():
     while (cmd_flag):
         print("コマンドを入力してください")
         in_cmd = input(">>> ")
-        cmd_flag = cmd.search(repo.get_repo(), in_cmd)
+        cmd_flag = cmd_seek.run(repo.get_repo(), in_cmd)
 
     set_end()
 

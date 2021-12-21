@@ -8,7 +8,7 @@ import cmd_plot
 import cmd_message
 
 
-def search(repo, cmd):
+def run(repo, cmd):
     # help
     if (cmd == "help"):
         cmd_help.run()

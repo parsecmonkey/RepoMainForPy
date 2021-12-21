@@ -159,7 +159,7 @@ def _wordcloud_by_author(repo, wordCloudGenerator):
     """
 
     # 入力テキストファイル
-    OUT_FILE_NAME = "pic/wordcloud_message_{}.png"
+    OUT_FILE_NAME = "pic/wordcloud_message_author/{}.png"
 
     # すべてのauthorを取得 #この方法はちょっと時間がかかるかも．最適化の余地あり．
     authors = set()
@@ -181,6 +181,10 @@ def _wordcloud_by_author(repo, wordCloudGenerator):
         # 形態素解析
         mecab_all = _mecab(text)  # 形態素解析
 
+        # リストが空の場合はスキップ
+        if len(mecab_all) == 0:
+            continue
+
         # 名詞及び名詞連結を取得#
         """
         名詞連結は，現状うまく動かないので，一旦コメントアウト
@@ -198,8 +202,7 @@ def _wordcloud_by_author(repo, wordCloudGenerator):
         mecab_only_noun = [m[0] for m in mecab_all if m[1] == "名詞"]  # 名詞のみ取得
         wakati = " ".join(mecab_only_noun)  # 分かち書き
 
-        wordCloudGenerator.out_file_name = OUT_FILE_NAME.format(
-            author)  # 出力ファイル名
+        wordCloudGenerator.out_file_name = OUT_FILE_NAME.format(author)  # 出力ファイル名
 
         wordCloudGenerator.wordcloud_draw(wakati)  # 出力
 
@@ -262,7 +265,7 @@ def run(repo):
     MAX_WORDS = 2000  # 出力個数の上限
     WIDTH = 500  # 出力画像の幅
     HEIGHT = 500  # 出力画像の高さ
-    FONT_FILE = "data/ipaexg.ttf"  # フォントファイルのパス
+    FONT_FILE = "font/ipaexg.ttf"  # フォントファイルのパス
 
     wordCloudGenerator = WordCloudGenerator(font_path=FONT_FILE, background_color="white", width=WIDTH, height=HEIGHT, collocations=False,
                                             stopwords=STOP_WORDS, max_words=MAX_WORDS, regexp=r"[\w']+")  # WordCloud初期化
@@ -278,8 +281,7 @@ def run(repo):
     mecab_only_noun = [m[0] for m in mecab_all if m[1] == "名詞"]  # 名詞のみ取得
     wakati = " ".join(mecab_only_noun)  # 分かち書き
 
-    frequency_words = wordCloudGenerator.frequency_count(
-        wakati).most_common(30)
+    frequency_words = wordCloudGenerator.frequency_count(wakati).most_common(30)
     sns.set(context="talk", font='Yu Gothic')
     fig = plt.subplots(figsize=(18, 8))
     sns.countplot(y=mecab_only_noun, order=[i[0] for i in frequency_words])
