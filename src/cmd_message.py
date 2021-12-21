@@ -5,6 +5,7 @@ import csv as c
 from tqdm import tqdm
 import seaborn as sns
 import matplotlib.pyplot as plt
+import re
 
 
 def _mecab_wakati(text):
@@ -28,6 +29,43 @@ def _mecab(text):
     node_list = node_list[1:-1]  # BOS/EOSタグを除外
 
     return node_list
+
+
+def _get_linked_nouns(mecab_all_list):
+    """
+    名詞連結する
+
+    @param:
+        meab_all_list:  _mecab関数の戻り値
+    """
+
+    # 英数記号のみ
+    re_alphabet_number_and_symbol = re.compile(r"^[a-zA-Z0-9!-/:-@¥[-`{-~]*$")
+
+    nouns = []
+    linked_nouns_temp = []
+    for idx in mecab_all_list:
+        if re_alphabet_number_and_symbol.fullmatch(idx[0]) is not None:
+            # すべて英語，数字，記号の場合は名詞連結しない
+            linked_nouns_temp.append([idx[0]])
+        elif idx[1] == "名詞":
+            # 品詞が名詞であれば
+            nouns.append(idx[0])
+        else:
+            linked_nouns_temp.append(nouns)
+            nouns = []
+    else:
+        linked_nouns_temp.append(nouns)
+
+    # 結合と空リストを削除
+    linked_nouns = []
+    for idx in linked_nouns_temp:
+        if len(idx) >= 1:
+            linked_nouns.append("".join(idx))
+        else:
+            pass
+
+    return linked_nouns
 
 
 # キーワード解析
@@ -129,21 +167,10 @@ def _wordcloud_all_messages(repo, wordCloudGenerator):
     mecab_all = _mecab(text)  # 形態素解析
 
     # 名詞及び名詞連結を取得#
-    """
-    名詞連結は，現状うまく動かないので，一旦コメントアウト
-    """
-    # mecab_linking_noun = []
-    # for m in range(len(mecab_all)-1):
-    #     if mecab_all[m][1] == "名詞" and mecab_all[m+1][1] == "名詞":
-    #         mecab_linking_noun.append(
-    #             mecab_all[m][0]+mecab_all[m+1][0])
-    #     elif mecab_all[m][1] == "名詞":
-    #         mecab_linking_noun.append(mecab_all[m][0])
-    #     else:
-    #         pass
+    # mecab_only_nouns = [m[0] for m in mecab_all if m[1] == "名詞"]  # 名詞のみ取得
+    mecab_only_nouns = _get_linked_nouns(mecab_all)  # 名詞連結で取得
 
-    mecab_only_noun = [m[0] for m in mecab_all if m[1] == "名詞"]  # 名詞のみ取得
-    wakati = " ".join(mecab_only_noun)  # 分かち書き
+    wakati = " ".join(mecab_only_nouns)  # 分かち書き
 
     wordCloudGenerator.out_file_name = OUT_FILE_NAME  # 出力ファイル名
     wordCloudGenerator.wordcloud_draw(wakati)  # 出力
@@ -186,23 +213,13 @@ def _wordcloud_by_author(repo, wordCloudGenerator):
             continue
 
         # 名詞及び名詞連結を取得#
-        """
-        名詞連結は，現状うまく動かないので，一旦コメントアウト
-        """
-        # mecab_linking_noun = []
-        # for m in range(len(mecab_all)-1):
-        #     if mecab_all[m][1] == "名詞" and mecab_all[m+1][1] == "名詞":
-        #         mecab_linking_noun.append(
-        #             mecab_all[m][0]+mecab_all[m+1][0])
-        #     elif mecab_all[m][1] == "名詞":
-        #         mecab_linking_noun.append(mecab_all[m][0])
-        #     else:
-        #         pass
+        # mecab_only_nouns = [m[0] for m in mecab_all if m[1] == "名詞"]  # 名詞のみ取得
+        mecab_only_nouns = _get_linked_nouns(mecab_all)  # 名詞連結で取得
 
-        mecab_only_noun = [m[0] for m in mecab_all if m[1] == "名詞"]  # 名詞のみ取得
-        wakati = " ".join(mecab_only_noun)  # 分かち書き
+        wakati = " ".join(mecab_only_nouns)  # 分かち書き
 
-        wordCloudGenerator.out_file_name = OUT_FILE_NAME.format(author)  # 出力ファイル名
+        wordCloudGenerator.out_file_name = OUT_FILE_NAME.format(
+            author)  # 出力ファイル名
 
         wordCloudGenerator.wordcloud_draw(wakati)  # 出力
 
@@ -281,7 +298,8 @@ def run(repo):
     mecab_only_noun = [m[0] for m in mecab_all if m[1] == "名詞"]  # 名詞のみ取得
     wakati = " ".join(mecab_only_noun)  # 分かち書き
 
-    frequency_words = wordCloudGenerator.frequency_count(wakati).most_common(30)
+    frequency_words = wordCloudGenerator.frequency_count(
+        wakati).most_common(30)
     sns.set(context="talk", font='Yu Gothic')
     fig = plt.subplots(figsize=(18, 8))
     sns.countplot(y=mecab_only_noun, order=[i[0] for i in frequency_words])
