@@ -161,22 +161,21 @@ def run(repo):
     # 入力テキストファイル
     OUT_FILE_NAME = "pic/wordcloud_message_{}.png"
 
-    # commit message を取得
-    text = _all_get_commit_message(repo)
-
     # すべてのauthorを取得 #この方法はちょっと時間がかかるかも．最適化の余地あり．
     authors = set()
     for commit in repo.iter_commits():
         authors.add(commit.author)
-    OUT_FILE_NAME = "pic/wordcloud_message.png"
 
     # 各authorのcommit messageを取得
     authors_text = dict()
     for author in authors:
-        authors_text[author] = _get_commit_message_by_author(repo, author)
+        # authorの名前は一緒だが，メアドが違う場合があるので，その対応
+        if author in authors_text:
+            authors_text[author] += _get_commit_message_by_author(repo, author)
+        else:
+            authors_text[author] = _get_commit_message_by_author(repo, author)
 
     for author, text in authors_text.items():
-
         # 形態素解析
         mecab_all = _mecab(text)  # 形態素解析
 
