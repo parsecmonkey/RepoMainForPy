@@ -116,7 +116,7 @@ def _get_commit_message_by_author(repo, author):
     return commit_message
 
 
-def _wordcloud_all_messages(repo):
+def _wordcloud_all_messages(repo, wordCloudGenerator):
     """
         すべてのcommit messageでwordcloudを作成する
     """
@@ -143,18 +143,8 @@ def _wordcloud_all_messages(repo):
     #         pass
 
     mecab_only_noun = [m[0] for m in mecab_all if m[1] == "名詞"]  # 名詞のみ取得
-
-    #### パラメータ ####
-    STOP_WORDS = ["　"]  # ストップワード
-    MAX_WORDS = 2000  # 出力個数の上限
-    WIDTH = 500  # 出力画像の幅
-    HEIGHT = 500  # 出力画像の高さ
-    FONT_FILE = "data/ipaexg.ttf"  # フォントファイルのパス
-
     wakati = " ".join(mecab_only_noun)  # 分かち書き
 
-    wordCloudGenerator = WordCloudGenerator(font_path=FONT_FILE, background_color="white", width=WIDTH, height=HEIGHT, collocations=False,
-                                            stopwords=STOP_WORDS, max_words=MAX_WORDS, regexp=r"[\w']+")  # WordCloud初期化
     wordCloudGenerator.out_file_name = OUT_FILE_NAME  # 出力ファイル名
     wordCloudGenerator.wordcloud_draw(wakati)  # 出力
 
@@ -163,7 +153,7 @@ def _wordcloud_all_messages(repo):
     print()
 
 
-def _wordcloud_by_author(repo):
+def _wordcloud_by_author(repo, wordCloudGenerator):
     """
         authorごとにwordcloudを作成する
     """
@@ -206,20 +196,11 @@ def _wordcloud_by_author(repo):
         #         pass
 
         mecab_only_noun = [m[0] for m in mecab_all if m[1] == "名詞"]  # 名詞のみ取得
-
-        #### パラメータ ####
-        STOP_WORDS = ["　"]  # ストップワード
-        MAX_WORDS = 2000  # 出力個数の上限
-        WIDTH = 500  # 出力画像の幅
-        HEIGHT = 500  # 出力画像の高さ
-        FONT_FILE = "data/ipaexg.ttf"  # フォントファイルのパス
-
         wakati = " ".join(mecab_only_noun)  # 分かち書き
 
-        wordCloudGenerator = WordCloudGenerator(font_path=FONT_FILE, background_color="white", width=WIDTH, height=HEIGHT, collocations=False,
-                                                stopwords=STOP_WORDS, max_words=MAX_WORDS, regexp=r"[\w']+")  # WordCloud初期化
         wordCloudGenerator.out_file_name = OUT_FILE_NAME.format(
             author)  # 出力ファイル名
+
         wordCloudGenerator.wordcloud_draw(wakati)  # 出力
 
         print(f"{wordCloudGenerator.out_file_name}に画像を出力しました")
@@ -276,10 +257,27 @@ def run(repo):
     """
         wordcloud生成処理
     """
-    _wordcloud_by_author(repo)  # authorごとにwordcloudを作成
-    # _wordcloud_all_messages(repo)  # 全メッセージをwordcloudにして出力
+    #### パラメータ ####
+    STOP_WORDS = ["　"]  # ストップワード
+    MAX_WORDS = 2000  # 出力個数の上限
+    WIDTH = 500  # 出力画像の幅
+    HEIGHT = 500  # 出力画像の高さ
+    FONT_FILE = "data/ipaexg.ttf"  # フォントファイルのパス
+
+    wordCloudGenerator = WordCloudGenerator(font_path=FONT_FILE, background_color="white", width=WIDTH, height=HEIGHT, collocations=False,
+                                            stopwords=STOP_WORDS, max_words=MAX_WORDS, regexp=r"[\w']+")  # WordCloud初期化
+
+    _wordcloud_by_author(repo, wordCloudGenerator)  # authorごとにwordcloudを作成
+    # _wordcloud_all_messages(repo, wordCloudGenerator)  # 全メッセージをwordcloudにして出力
 
     # 単語の頻出頻度
+    wordCloudGenerator.out_file_name = "./pic/word_frequency.png"
+
+    """マージ前の処理と同じはず"""
+    mecab_all = _mecab(_get_all_commit_message(repo))  # 形態素解析
+    mecab_only_noun = [m[0] for m in mecab_all if m[1] == "名詞"]  # 名詞のみ取得
+    wakati = " ".join(mecab_only_noun)  # 分かち書き
+
     frequency_words = wordCloudGenerator.frequency_count(
         wakati).most_common(30)
     sns.set(context="talk", font='Yu Gothic')
