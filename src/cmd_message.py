@@ -89,7 +89,7 @@ def _get_all_commit_message(repo):
     すべてのcommit messageを取得する
     """
     all_commit_message = ""
-    with open("temp.txt", "w", encoding="utf-8") as f:
+    with open("log/eliminate_message.txt", "w", encoding="utf-8") as f:
         for commit in repo.iter_commits():
             # Mergeから始まるcommit messageは除外
             if not commit.message.startswith('Merge'):
