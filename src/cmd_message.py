@@ -86,47 +86,73 @@ def _all_get_commit_message(repo):
     return all_commit_message
 
 
+def _get_commit_message_by_author(repo, author):
+    """
+    指定したauthorのcommit messageを取得する
+    """
+    commit_message = ""
+    for commit in repo.iter_commits():
+        if commit.author == author:
+            commit_message += commit.message
+    return commit_message
+
+
 def run(repo):
     # 入力テキストファイル
-    OUT_FILE_NAME = "pic/wordcloud_message.png"
+    OUT_FILE_NAME = "pic/wordcloud_message_{}.png"
 
     # commit message を取得
-    TEXT = _all_get_commit_message(repo)
+    text = _all_get_commit_message(repo)
 
-    # 形態素解析
-    mecab_all = _mecab(TEXT)  # 形態素解析
+    # すべてのauthorを取得 #この方法はちょっと時間がかかるかも．最適化の余地あり．
+    authors = set()
+    for commit in repo.iter_commits():
+        authors.add(commit.author)
 
-    # 名詞及び名詞連結を取得#
-    """
-    名詞連結は，現状うまく動かないので，一旦コメントアウト
-    """
-    # mecab_linking_noun = []
-    # for m in range(len(mecab_all)-1):
-    #     if mecab_all[m][1] == "名詞" and mecab_all[m+1][1] == "名詞":
-    #         mecab_linking_noun.append(
-    #             mecab_all[m][0]+mecab_all[m+1][0])
-    #     elif mecab_all[m][1] == "名詞":
-    #         mecab_linking_noun.append(mecab_all[m][0])
-    #     else:
-    #         pass
+    # 各authorのcommit messageを取得
+    authors_text = dict()
+    for author in authors:
+        authors_text[author] = _get_commit_message_by_author(repo, author)
 
-    mecab_only_noun = [m[0] for m in mecab_all if m[1] == "名詞"]  # 名詞のみ取得
+    for author, text in authors_text.items():
 
-    #### パラメータ ####
-    STOP_WORDS = ["　"]  # ストップワード
-    MAX_WORDS = 2000  # 出力個数の上限
-    WIDTH = 500  # 出力画像の幅
-    HEIGHT = 500  # 出力画像の高さ
-    FONT_FILE = "data/ipaexg.ttf"  # フォントファイルのパス
+        # 形態素解析
+        mecab_all = _mecab(text)  # 形態素解析
 
-    wakati = " ".join(mecab_only_noun)  # 分かち書き
+        # 名詞及び名詞連結を取得#
+        """
+        名詞連結は，現状うまく動かないので，一旦コメントアウト
+        """
+        # mecab_linking_noun = []
+        # for m in range(len(mecab_all)-1):
+        #     if mecab_all[m][1] == "名詞" and mecab_all[m+1][1] == "名詞":
+        #         mecab_linking_noun.append(
+        #             mecab_all[m][0]+mecab_all[m+1][0])
+        #     elif mecab_all[m][1] == "名詞":
+        #         mecab_linking_noun.append(mecab_all[m][0])
+        #     else:
+        #         pass
 
-    wordCloudGenerator = WordCloudGenerator(font_path=FONT_FILE, background_color="white", width=WIDTH, height=HEIGHT, collocations=False,
-                                            stopwords=STOP_WORDS, max_words=MAX_WORDS, regexp=r"[\w']+")  # WordCloud初期化
-    wordCloudGenerator.out_file_name = OUT_FILE_NAME  # 出力ファイル名
-    wordCloudGenerator.wordcloud_draw(wakati)  # 出力
+        mecab_only_noun = [m[0] for m in mecab_all if m[1] == "名詞"]  # 名詞のみ取得
 
-    print(f"{OUT_FILE_NAME}に画像を出力しました")
+        #### パラメータ ####
+        STOP_WORDS = ["　"]  # ストップワード
+        MAX_WORDS = 2000  # 出力個数の上限
+        WIDTH = 500  # 出力画像の幅
+        HEIGHT = 500  # 出力画像の高さ
+        FONT_FILE = "data/ipaexg.ttf"  # フォントファイルのパス
+
+        wakati = " ".join(mecab_only_noun)  # 分かち書き
+
+        wordCloudGenerator = WordCloudGenerator(font_path=FONT_FILE, background_color="white", width=WIDTH, height=HEIGHT, collocations=False,
+                                                stopwords=STOP_WORDS, max_words=MAX_WORDS, regexp=r"[\w']+")  # WordCloud初期化
+        wordCloudGenerator.out_file_name = OUT_FILE_NAME.format(
+            author)  # 出力ファイル名
+        wordCloudGenerator.wordcloud_draw(wakati)  # 出力
+
+        print(f"{wordCloudGenerator.out_file_name}に画像を出力しました")
+
+    print("すべてのcontributorのwordcloudを出力しました")
     print()
 
 
