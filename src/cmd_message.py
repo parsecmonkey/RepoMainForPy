@@ -1,6 +1,8 @@
 import MeCab
 from wordcloud import WordCloud
 import collections
+import csv as c
+from tqdm import tqdm
 
 
 def _mecab_wakati(text):
@@ -24,6 +26,17 @@ def _mecab(text):
     node_list = node_list[1:-1]  # BOS/EOSタグを除外
 
     return node_list
+
+
+# キーワード解析
+def keyword_analy(text):
+    key_out = []
+    key_list = ["ように", "修正", "追加", "削除", "作成",
+                "変更", "編集", "更新", "整理", "調整", "実装"]
+    for key in key_list:
+        if key in text:
+            key_out.append(key)
+    return key_out
 
 
 class WordCloudGenerator:
@@ -98,6 +111,53 @@ def _get_commit_message_by_author(repo, author):
 
 
 def run(repo):
+    # message.csv
+    f = open("./log/message.csv", "w+", encoding="utf_8_sig", newline='')
+    csv = c.writer(f)
+    # csvヘッダー追加
+    csv.writerow([
+        'commit_no',
+        'message',
+        'len',
+        'key_flag',
+        'keyword',
+        'marp_flag'
+        'morpheme'])
+
+    sum_commits = repo.git.rev_list('--count', 'HEAD')  # コミットの総数
+    commit_count = 0
+    sum_message_len = 0  # メッセージの文字数合計
+    key_match_count = 0  # キーワードの一致回数合計
+    # commit message を取得
+    TEXT = ""
+    with tqdm(total=int(sum_commits), desc='message.csv') as pbar:  # プログレスバーの設定
+        for commit in repo.iter_commits():
+            commit_no = int(sum_commits) - commit_count
+            message_len = int(len(commit.message)) - 1
+            sum_message_len += message_len
+            keyword = keyword_analy(commit.message)
+            key_flag = len(keyword)
+            if key_flag == 0:
+                keyword = "none"
+            else:
+                key_match_count += 1
+
+            TEXT += commit.message
+
+            # message.csvに書き込み
+            csv.writerow([
+                commit_no,
+                commit.message,
+                message_len,
+                key_flag,
+                keyword,
+                0,
+                "none"])
+
+            commit_count += 1
+
+            pbar.update(1)  # プログレスバーの進捗率を更新
+
     # 入力テキストファイル
     OUT_FILE_NAME = "pic/wordcloud_message_{}.png"
 
@@ -108,6 +168,7 @@ def run(repo):
     authors = set()
     for commit in repo.iter_commits():
         authors.add(commit.author)
+    OUT_FILE_NAME = "pic/wordcloud_message.png"
 
     # 各authorのcommit messageを取得
     authors_text = dict()
@@ -154,6 +215,14 @@ def run(repo):
 
     print("すべてのcontributorのwordcloudを出力しました")
     print()
+
+    print("---メッセージ解析結果---")
+    print("総メッセージ数：" + sum_commits)
+    print("文字数の平均：{:.1f}".format(sum_message_len/int(sum_commits)))
+    print("キーワード一致回数：" + str(key_match_count))
+    print()
+
+    f.close()
 
 
 if __name__ == "__main__":
