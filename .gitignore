@@ -5,5 +5,7 @@ __pycache__
 /log/diff.log
 /log/log.csv
 /log/contributors.csv
+/log/message.csv
 /pic/commit_calendar.png
 /pic/commit_transition.png
+/pic/wordcloud_message.png

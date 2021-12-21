@@ -1,6 +1,7 @@
 import MeCab
 from wordcloud import WordCloud
 import collections
+import csv as c
 
 
 def mecab_wakati(text):
@@ -24,6 +25,17 @@ def mecab(text):
     node_list = node_list[1:-1]  # BOS/EOSタグを除外
 
     return node_list
+
+
+# キーワード解析
+def keyword_analy(text):
+    key_out = []
+    key_list = ["ように", "修正", "追加", "削除", "作成", "変更", "編集", "更新", "整理", "調整"]
+    for key in key_list:
+        if key in text:
+            key_out.append(key)
+
+    return key_out
 
 
 class WordCloudGenerator:
@@ -72,11 +84,41 @@ class WordCloudGenerator:
 def run(repo):
     # 入力テキストファイル
     OUT_FILE_NAME = "pic/wordcloud_message.png"
+    # message.csv
+    f = open("./log/message.csv","w+", encoding="utf_8_sig", newline='')
+    csv = c.writer(f)
+    # csvヘッダー追加
+    csv.writerow([
+        'commit_no',
+        'message',
+        'key_flag',
+        'keyword',
+        'marp_flag'
+        'morpheme'])
 
+    sum_commits    = repo.git.rev_list('--count', 'HEAD') # コミットの総数
+    commit_count   = 0
     # commit message を取得
     TEXT = ""
     for commit in repo.iter_commits():
+        commit_no =  int(sum_commits) - commit_count
+        keyword  = keyword_analy(commit.message)
+        key_flag = len(keyword)
+        if key_flag == 0:
+            keyword = "none"
+
         TEXT += commit.message
+
+        # message.csvに書き込み
+        csv.writerow([
+            commit_no,
+            commit.message,
+            key_flag,
+            keyword,
+            0,
+            "none"])
+
+        commit_count += 1
 
     # 形態素解析
     mecab_all = mecab(TEXT)  # 形態素解析
@@ -106,6 +148,8 @@ def run(repo):
 
     print(f"{OUT_FILE_NAME}に画像を出力しました")
     print()
+
+    f.close()
 
 
 if __name__ == "__main__":
