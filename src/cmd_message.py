@@ -285,6 +285,7 @@ def run(repo):
     sns.set(context="talk", font='Yu Gothic')
     fig = plt.subplots(figsize=(18, 8))
     sns.countplot(y=mecab_only_noun, order=[i[0] for i in frequency_words])
+    plt.subplots_adjust(left=0.175, right=0.95, bottom=0.12, top=0.95)
     plt.savefig("pic/frequency_words.png")
     print("pic/frequency_words.pngに画像を出力しました")
 
