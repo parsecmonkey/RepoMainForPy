@@ -34,8 +34,8 @@ def _mecab(text):
 # キーワード解析
 def keyword_analy(text):
     key_out = []
-    key_list = ["ように", "修正", "追加", "削除", "作成",
-                "変更", "編集", "更新", "整理", "調整", "実装"]
+    key_list = ["ように", "修正", "追加", "削除", "作成", "設定", "保存"
+                "変更", "編集", "更新", "整理", "調整", "実装", "表示", "化"]
     for key in key_list:
         if key in text:
             key_out.append(key)
