@@ -90,7 +90,7 @@ def run(repo):
             sum_deletions  += deletions
 
             # マージコミット数を計測
-            if commit.message.startswith("Merge pull request"):
+            if commit.message.startswith("Merge"):
                 merge_count += 1
 
             pbar.update(1) # プログレスバーの進捗率を更新
