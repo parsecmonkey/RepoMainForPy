@@ -5,6 +5,7 @@ import csv as c
 from tqdm import tqdm
 import seaborn as sns
 import matplotlib.pyplot as plt
+import re
 
 
 def _mecab_wakati(text):
@@ -81,6 +82,23 @@ class WordCloudGenerator:
         words = wakati_text.split(" ")
         words = [word for word in words if word not in self.stopwords]
         word_freq = collections.Counter(words)
+        return word_freq
+
+    def frequency_count_jp(self, wakati_text):
+        """
+        日本語の単語頻出頻度算出
+        @param 
+            wakati_text str 分かち書きテキスト
+        """
+        words = wakati_text.split(" ")
+        compile_words = re.compile('[!"#$%&\'\\\\()*+,-./:;<=>?@[\\]^_`{|}~「」〔〕“”〈〉『』【】＆＊・（）＄＃＠。、？！｀＋￥％]')
+        compile_abc_123 = re.compile(r'[a-zA-Z0-9０-９]')
+        words_jp = []
+        for word in words:
+            if not bool(compile_words.search(word)):
+                if not bool(compile_abc_123.search(word)):
+                    words_jp.append(word)
+        word_freq = collections.Counter(words_jp)
         return word_freq
 
 
@@ -261,7 +279,7 @@ def run(repo):
         wordcloud生成処理
     """
     #### パラメータ ####
-    STOP_WORDS = [" ", "　", "[", "]", "{", "}", "「", "」", "【", "】", ",", ".", "、", "。", "#", "-", "_", "/"]  # ストップワード
+    STOP_WORDS = [" ", "　"]  # ストップワード
     MAX_WORDS = 2000  # 出力個数の上限
     WIDTH = 500  # 出力画像の幅
     HEIGHT = 500  # 出力画像の高さ
@@ -281,7 +299,7 @@ def run(repo):
     mecab_only_noun = [m[0] for m in mecab_all if m[1] == "名詞"]  # 名詞のみ取得
     wakati = " ".join(mecab_only_noun)  # 分かち書き
 
-    frequency_words = wordCloudGenerator.frequency_count(wakati).most_common(30)
+    frequency_words = wordCloudGenerator.frequency_count_jp(wakati).most_common(30)
     sns.set(context="talk", font='Yu Gothic')
     fig = plt.subplots(figsize=(18, 8))
     sns.countplot(y=mecab_only_noun, order=[i[0] for i in frequency_words])
